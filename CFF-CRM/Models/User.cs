@@ -12,8 +12,9 @@ namespace CFF_CRM.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        [DataType(DataType.EmailAddress)]
-        public object Email { get; set; }
+        [DataType(DataType.EmailAddress)] //email data type for db
+        [EmailAddress] //email validation
+        public string Email { get; set; }
 
         public string Username { get; set; }
         public string Password { get; set; }

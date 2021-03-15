@@ -24,5 +24,9 @@ namespace CFF_CRM.Models
         public int PhonePriorityId { get; set; }
         public PhonePriority PhonePriority { get; set; }
 
+        [DataType(DataType.PhoneNumber)] //phone number data type in db
+        [Phone] //phone number validation
+        public string Number { get; set; }
+
     }
 }
