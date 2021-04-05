@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CFF_CRM.Models
 {
-    public class TaskNote
+    public class TaskUpdate
     {
-        public int TaskNoteId { get; set; }
-
+        public int TaskUpdateId { get; set; }
         [ForeignKey("Task")]
         public int TaskId { get; set; }
         public Task task { get; set; }
-        public int NoteId { get; set; }
+
+        public string UpdateBy { get; set; }
+        public DateTime UpdateTime { get; set; }
     }
 }
