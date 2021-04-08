@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CFF_CRM.Migrations
 {
     [DbContext(typeof(CRMContext))]
-    [Migration("20210317145034_AddMostModels")]
-    partial class AddMostModels
+    [Migration("20210408002603_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("ProductVersion", "3.1.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CFF_CRM.Models.Attachment", b =>
@@ -38,6 +38,8 @@ namespace CFF_CRM.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("AttachmentId");
+
+                    b.HasIndex("TaskId");
 
                     b.ToTable("Attachments");
                 });
@@ -90,7 +92,43 @@ namespace CFF_CRM.Migrations
                         {
                             OrderItemId = 2,
                             Name = "Account update/Claim form"
+                        },
+                        new
+                        {
+                            OrderItemId = 3,
+                            Name = "Itemizations form"
+                        },
+                        new
+                        {
+                            OrderItemId = 4,
+                            Name = "Return envelopes"
                         });
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.PasswordReset", b =>
+                {
+                    b.Property<int>("PasswordResetId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PasswordResetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordResets");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.Permission", b =>
@@ -106,6 +144,41 @@ namespace CFF_CRM.Migrations
                     b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            PermissionId = 1,
+                            Name = "Administrator"
+                        },
+                        new
+                        {
+                            PermissionId = 2,
+                            Name = "User"
+                        },
+                        new
+                        {
+                            PermissionId = 3,
+                            Name = "Visitor"
+                        });
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.PermissionGroupPolicy", b =>
+                {
+                    b.Property<int>("PermissionGroupPolicyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Page")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PermissionGroupPolicyId");
+
+                    b.ToTable("PermissionGroupPolicies");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.PhoneNumber", b =>
@@ -216,6 +289,55 @@ namespace CFF_CRM.Migrations
                     b.ToTable("Status");
                 });
 
+            modelBuilder.Entity("CFF_CRM.Models.SupplyRequest", b =>
+                {
+                    b.Property<int>("SupplyRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OwnerName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplyRequestOriginId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplyRequestTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SupplyRequestId");
+
+                    b.HasIndex("OrderItemId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("SupplyRequestOriginId");
+
+                    b.HasIndex("SupplyRequestTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SupplyRequests");
+                });
+
             modelBuilder.Entity("CFF_CRM.Models.SupplyRequestNote", b =>
                 {
                     b.Property<int>("SupplyRequestNoteId")
@@ -230,6 +352,8 @@ namespace CFF_CRM.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SupplyRequestNoteId");
+
+                    b.HasIndex("SupplyRequestId");
 
                     b.ToTable("SupplyRequestNotes");
                 });
@@ -264,6 +388,29 @@ namespace CFF_CRM.Migrations
                     b.ToTable("SupplyRequestTypes");
                 });
 
+            modelBuilder.Entity("CFF_CRM.Models.SupplyRequestUpdate", b =>
+                {
+                    b.Property<int>("SupplyRequestUpdateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SupplyRequestUpdateId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("SupplyRequestUpdates");
+                });
+
             modelBuilder.Entity("CFF_CRM.Models.Task", b =>
                 {
                     b.Property<int>("TaskId")
@@ -277,16 +424,38 @@ namespace CFF_CRM.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Owner")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("PriorityId")
                         .HasColumnType("int");
 
+                    b.Property<int>("RelatedId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RelatedName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("TaskId");
+
+                    b.HasIndex("PriorityId");
+
+                    b.HasIndex("RelatedId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("TaskTypeId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
                 });
@@ -306,6 +475,8 @@ namespace CFF_CRM.Migrations
 
                     b.HasKey("TaskNoteId");
 
+                    b.HasIndex("TaskId");
+
                     b.ToTable("TaskNotes");
                 });
 
@@ -322,6 +493,29 @@ namespace CFF_CRM.Migrations
                     b.HasKey("TaskTypeId");
 
                     b.ToTable("TaskTypes");
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.TaskUpdate", b =>
+                {
+                    b.Property<int>("TaskUpdateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UpdateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("TaskUpdateId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("TaskUpdates");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.User", b =>
@@ -362,6 +556,24 @@ namespace CFF_CRM.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("CFF_CRM.Models.Attachment", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.Task", "task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.PasswordReset", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CFF_CRM.Models.PhoneNumber", b =>
                 {
                     b.HasOne("CFF_CRM.Models.PhonePriority", "PhonePriority")
@@ -381,12 +593,108 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("PhonePriority");
+            modelBuilder.Entity("CFF_CRM.Models.SupplyRequest", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.OrderItem", "orderItem")
+                        .WithMany()
+                        .HasForeignKey("OrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("PhoneType");
+                    b.HasOne("CFF_CRM.Models.Status", "status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("user");
+                    b.HasOne("CFF_CRM.Models.SupplyRequestOrigin", "supplyRequestOrigin")
+                        .WithMany()
+                        .HasForeignKey("SupplyRequestOriginId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.SupplyRequestType", "supplyRequestType")
+                        .WithMany()
+                        .HasForeignKey("SupplyRequestTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.SupplyRequestNote", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.SupplyRequest", "supplyRequest")
+                        .WithMany()
+                        .HasForeignKey("SupplyRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.SupplyRequestUpdate", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.Task", "task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.Task", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.Priority", "priority")
+                        .WithMany()
+                        .HasForeignKey("PriorityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.Related", "related")
+                        .WithMany()
+                        .HasForeignKey("RelatedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.Status", "status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.TaskType", "taskType")
+                        .WithMany()
+                        .HasForeignKey("TaskTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CFF_CRM.Models.User", "user")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.TaskNote", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.Task", "task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CFF_CRM.Models.TaskUpdate", b =>
+                {
+                    b.HasOne("CFF_CRM.Models.Task", "task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.User", b =>
@@ -396,8 +704,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Permission");
                 });
 #pragma warning restore 612, 618
         }

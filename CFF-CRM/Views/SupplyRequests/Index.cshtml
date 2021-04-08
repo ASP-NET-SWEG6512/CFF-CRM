@@ -1,0 +1,84 @@
+﻿@model IEnumerable<CFF_CRM.Models.SupplyRequest>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.user)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.orderItem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.supplyRequestOrigin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.supplyRequestType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClientName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OwnerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedTime)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.status.StatusId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.user.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.orderItem.OrderItemId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.supplyRequestOrigin.SupplyRequestOriginId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.supplyRequestType.SupplyRequestTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClientName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OwnerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedTime)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.SupplyRequestId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.SupplyRequestId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -15,8 +15,8 @@ namespace CFF_CRM.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("ProductVersion", "3.1.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CFF_CRM.Models.Attachment", b =>
@@ -561,8 +561,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("task");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.PasswordReset", b =>
@@ -572,8 +570,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.PhoneNumber", b =>
@@ -595,12 +591,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("PhonePriority");
-
-                    b.Navigation("PhoneType");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.SupplyRequest", b =>
@@ -634,16 +624,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("orderItem");
-
-                    b.Navigation("status");
-
-                    b.Navigation("supplyRequestOrigin");
-
-                    b.Navigation("supplyRequestType");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.SupplyRequestNote", b =>
@@ -653,8 +633,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("SupplyRequestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("supplyRequest");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.SupplyRequestUpdate", b =>
@@ -664,8 +642,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("task");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.Task", b =>
@@ -699,16 +675,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("priority");
-
-                    b.Navigation("related");
-
-                    b.Navigation("status");
-
-                    b.Navigation("taskType");
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.TaskNote", b =>
@@ -718,8 +684,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("task");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.TaskUpdate", b =>
@@ -729,8 +693,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("task");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.User", b =>
@@ -740,8 +702,6 @@ namespace CFF_CRM.Migrations
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Permission");
                 });
 #pragma warning restore 612, 618
         }
