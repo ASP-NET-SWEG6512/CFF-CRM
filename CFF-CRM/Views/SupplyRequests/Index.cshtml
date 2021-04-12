@@ -14,52 +14,52 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.status)
+                Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.user)
+                Order Item
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.orderItem)
+                Supply Request Origin
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.supplyRequestOrigin)
+                Supply Request Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.supplyRequestType)
+                Client Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ClientName)
+                Owner Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OwnerName)
+                Created By
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                Created Time
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedTime)
+                Update By
             </th>
-            <th></th>
+            <th>
+                Update Time
+            </th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.status.StatusId)
+                <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.user.UserId)
+                @Html.DisplayFor(modelItem => item.orderItem.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.orderItem.OrderItemId)
+                @Html.DisplayFor(modelItem => item.supplyRequestOrigin.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.supplyRequestOrigin.SupplyRequestOriginId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.supplyRequestType.SupplyRequestTypeId)
+                @Html.DisplayFor(modelItem => item.supplyRequestType.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ClientName)
@@ -72,6 +72,12 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateTime)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |

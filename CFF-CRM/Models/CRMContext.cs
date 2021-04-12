@@ -25,11 +25,9 @@ namespace CFF_CRM.Models
         public DbSet<SupplyRequestOrigin> SupplyRequestOrigins { get; set; }//
         public DbSet<SupplyRequestType> SupplyRequestTypes { get; set; }//
         public DbSet<SupplyRequest> SupplyRequests { get; set; }//
-        public DbSet<SupplyRequestUpdate> SupplyRequestUpdates { get; set; }//
         public DbSet<Task> Tasks { get; set; }//
         public DbSet<TaskNote> TaskNotes { get; set; }//
         public DbSet<TaskType> TaskTypes { get; set; }//
-        public DbSet<TaskUpdate> TaskUpdates { get; set; }//
         public DbSet<User> Users { get; set; }//
 
         // List of OrderItems

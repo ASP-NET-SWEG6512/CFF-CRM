@@ -15,7 +15,7 @@ namespace CFF_CRM.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Content = table.Column<string>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: true),
                     Archived = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -264,7 +264,9 @@ namespace CFF_CRM.Migrations
                     ClientName = table.Column<string>(nullable: true),
                     OwnerName = table.Column<string>(nullable: true),
                     CreatedBy = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<DateTime>(nullable: false)
+                    CreatedTime = table.Column<DateTime>(nullable: true),
+                    UpdateBy = table.Column<string>(nullable: true),
+                    UpdateTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -315,7 +317,9 @@ namespace CFF_CRM.Migrations
                     TaskTypeId = table.Column<int>(nullable: false),
                     PriorityId = table.Column<int>(nullable: false),
                     CreatedBy = table.Column<string>(nullable: true),
-                    CreatedTime = table.Column<DateTime>(nullable: false)
+                    CreatedTime = table.Column<DateTime>(nullable: true),
+                    UpdateBy = table.Column<string>(nullable: true),
+                    UpdateTime = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -365,6 +369,12 @@ namespace CFF_CRM.Migrations
                 {
                     table.PrimaryKey("PK_SupplyRequestNotes", x => x.SupplyRequestNoteId);
                     table.ForeignKey(
+                        name: "FK_SupplyRequestNotes_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "NoteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_SupplyRequestNotes_SupplyRequests_SupplyRequestId",
                         column: x => x.SupplyRequestId,
                         principalTable: "SupplyRequests",
@@ -394,27 +404,6 @@ namespace CFF_CRM.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SupplyRequestUpdates",
-                columns: table => new
-                {
-                    SupplyRequestUpdateId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskId = table.Column<int>(nullable: false),
-                    UpdateBy = table.Column<string>(nullable: true),
-                    UpdateTime = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SupplyRequestUpdates", x => x.SupplyRequestUpdateId);
-                    table.ForeignKey(
-                        name: "FK_SupplyRequestUpdates_Tasks_TaskId",
-                        column: x => x.TaskId,
-                        principalTable: "Tasks",
-                        principalColumn: "TaskId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TaskNotes",
                 columns: table => new
                 {
@@ -427,28 +416,13 @@ namespace CFF_CRM.Migrations
                 {
                     table.PrimaryKey("PK_TaskNotes", x => x.TaskNoteId);
                     table.ForeignKey(
-                        name: "FK_TaskNotes_Tasks_TaskId",
-                        column: x => x.TaskId,
-                        principalTable: "Tasks",
-                        principalColumn: "TaskId",
+                        name: "FK_TaskNotes_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "NoteId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "TaskUpdates",
-                columns: table => new
-                {
-                    TaskUpdateId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TaskId = table.Column<int>(nullable: false),
-                    UpdateBy = table.Column<string>(nullable: true),
-                    UpdateTime = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaskUpdates", x => x.TaskUpdateId);
                     table.ForeignKey(
-                        name: "FK_TaskUpdates_Tasks_TaskId",
+                        name: "FK_TaskNotes_Tasks_TaskId",
                         column: x => x.TaskId,
                         principalTable: "Tasks",
                         principalColumn: "TaskId",
@@ -461,9 +435,17 @@ namespace CFF_CRM.Migrations
                 values: new object[,]
                 {
                     { 1, "Preneed agreement" },
-                    { 2, "Account update/Claim form" },
+                    { 12, "Other" },
+                    { 11, "Investment election form" },
+                    { 9, "Monthly monitors" },
+                    { 8, "Funding your funeral in advance brochure" },
+                    { 7, "Planning guides" },
+                    { 10, "Service and merchandise forms" },
+                    { 5, "Postage paid envelopes" },
+                    { 4, "Return envelopes" },
                     { 3, "Itemizations form" },
-                    { 4, "Return envelopes" }
+                    { 2, "Account update/Claim form" },
+                    { 6, "Deposit tickets" }
                 });
 
             migrationBuilder.InsertData(
@@ -474,6 +456,82 @@ namespace CFF_CRM.Migrations
                     { 1, "Administrator" },
                     { 2, "User" },
                     { 3, "Visitor" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "PhoneTypes",
+                columns: new[] { "PhoneTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 4, "Other" },
+                    { 1, "Home" },
+                    { 2, "Mobile" },
+                    { 3, "Work" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Priorities",
+                columns: new[] { "PriorityId", "Name" },
+                values: new object[,]
+                {
+                    { 3, "Low" },
+                    { 2, "Medium" },
+                    { 1, "High" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Related",
+                columns: new[] { "RelatedId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Customer" },
+                    { 2, "Potential customer" },
+                    { 3, "Lead" },
+                    { 4, "In-house" },
+                    { 5, "Other" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "StatusId", "Color", "Name" },
+                values: new object[,]
+                {
+                    { 4, "#ED9E1E", "On Hold" },
+                    { 3, "#10A037", "Completed" },
+                    { 5, "#DE1313", "Cancelled" },
+                    { 1, "#0d47a1", "New" },
+                    { 2, "#1a237e", "In-Process" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyRequestOrigins",
+                columns: new[] { "SupplyRequestOriginId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Phone" },
+                    { 2, "Fax" },
+                    { 3, "Email" },
+                    { 4, "Mail" },
+                    { 5, "Reginal Manager" },
+                    { 6, "Other" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyRequestTypes",
+                columns: new[] { "SupplyRequestTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Vendor" },
+                    { 2, "Client" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskTypes",
+                columns: new[] { "TaskTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Reminder call" },
+                    { 2, "Follow-up" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -500,6 +558,11 @@ namespace CFF_CRM.Migrations
                 name: "IX_PhoneNumbers_UserId",
                 table: "PhoneNumbers",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupplyRequestNotes_NoteId",
+                table: "SupplyRequestNotes",
+                column: "NoteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SupplyRequestNotes_SupplyRequestId",
@@ -532,9 +595,9 @@ namespace CFF_CRM.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SupplyRequestUpdates_TaskId",
-                table: "SupplyRequestUpdates",
-                column: "TaskId");
+                name: "IX_TaskNotes_NoteId",
+                table: "TaskNotes",
+                column: "NoteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskNotes_TaskId",
@@ -567,11 +630,6 @@ namespace CFF_CRM.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TaskUpdates_TaskId",
-                table: "TaskUpdates",
-                column: "TaskId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_PermissionId",
                 table: "Users",
                 column: "PermissionId");
@@ -581,9 +639,6 @@ namespace CFF_CRM.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Attachments");
-
-            migrationBuilder.DropTable(
-                name: "Notes");
 
             migrationBuilder.DropTable(
                 name: "PasswordResets");
@@ -598,13 +653,7 @@ namespace CFF_CRM.Migrations
                 name: "SupplyRequestNotes");
 
             migrationBuilder.DropTable(
-                name: "SupplyRequestUpdates");
-
-            migrationBuilder.DropTable(
                 name: "TaskNotes");
-
-            migrationBuilder.DropTable(
-                name: "TaskUpdates");
 
             migrationBuilder.DropTable(
                 name: "PhonePriorities");
@@ -614,6 +663,9 @@ namespace CFF_CRM.Migrations
 
             migrationBuilder.DropTable(
                 name: "SupplyRequests");
+
+            migrationBuilder.DropTable(
+                name: "Notes");
 
             migrationBuilder.DropTable(
                 name: "Tasks");

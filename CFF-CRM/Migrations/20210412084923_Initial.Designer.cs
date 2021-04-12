@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CFF_CRM.Migrations
 {
     [DbContext(typeof(CRMContext))]
-    [Migration("20210412005625_AddedData")]
-    partial class AddedData
+    [Migration("20210412084923_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,7 +60,7 @@ namespace CFF_CRM.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("NoteId");
@@ -440,7 +440,7 @@ namespace CFF_CRM.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedTime")
+                    b.Property<DateTime?>("CreatedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("OrderItemId")
@@ -457,6 +457,12 @@ namespace CFF_CRM.Migrations
 
                     b.Property<int>("SupplyRequestTypeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UpdateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -490,6 +496,8 @@ namespace CFF_CRM.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SupplyRequestNoteId");
+
+                    b.HasIndex("NoteId");
 
                     b.HasIndex("SupplyRequestId");
 
@@ -570,29 +578,6 @@ namespace CFF_CRM.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CFF_CRM.Models.SupplyRequestUpdate", b =>
-                {
-                    b.Property<int>("SupplyRequestUpdateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("SupplyRequestUpdateId");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("SupplyRequestUpdates");
-                });
-
             modelBuilder.Entity("CFF_CRM.Models.Task", b =>
                 {
                     b.Property<int>("TaskId")
@@ -603,7 +588,7 @@ namespace CFF_CRM.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedTime")
+                    b.Property<DateTime?>("CreatedTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Owner")
@@ -623,6 +608,12 @@ namespace CFF_CRM.Migrations
 
                     b.Property<int>("TaskTypeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("UpdateBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -657,6 +648,8 @@ namespace CFF_CRM.Migrations
 
                     b.HasKey("TaskNoteId");
 
+                    b.HasIndex("NoteId");
+
                     b.HasIndex("TaskId");
 
                     b.ToTable("TaskNotes");
@@ -687,29 +680,6 @@ namespace CFF_CRM.Migrations
                             TaskTypeId = 2,
                             Name = "Follow-up"
                         });
-                });
-
-            modelBuilder.Entity("CFF_CRM.Models.TaskUpdate", b =>
-                {
-                    b.Property<int>("TaskUpdateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdateBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("TaskUpdateId");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("TaskUpdates");
                 });
 
             modelBuilder.Entity("CFF_CRM.Models.User", b =>
@@ -824,18 +794,15 @@ namespace CFF_CRM.Migrations
 
             modelBuilder.Entity("CFF_CRM.Models.SupplyRequestNote", b =>
                 {
+                    b.HasOne("CFF_CRM.Models.Note", "note")
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("CFF_CRM.Models.SupplyRequest", "supplyRequest")
                         .WithMany()
                         .HasForeignKey("SupplyRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CFF_CRM.Models.SupplyRequestUpdate", b =>
-                {
-                    b.HasOne("CFF_CRM.Models.Task", "task")
-                        .WithMany()
-                        .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -875,15 +842,12 @@ namespace CFF_CRM.Migrations
 
             modelBuilder.Entity("CFF_CRM.Models.TaskNote", b =>
                 {
-                    b.HasOne("CFF_CRM.Models.Task", "task")
+                    b.HasOne("CFF_CRM.Models.Note", "note")
                         .WithMany()
-                        .HasForeignKey("TaskId")
+                        .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
 
-            modelBuilder.Entity("CFF_CRM.Models.TaskUpdate", b =>
-                {
                     b.HasOne("CFF_CRM.Models.Task", "task")
                         .WithMany()
                         .HasForeignKey("TaskId")
