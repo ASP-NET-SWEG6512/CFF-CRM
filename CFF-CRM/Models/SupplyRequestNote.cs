@@ -12,6 +12,8 @@ namespace CFF_CRM.Models
         [ForeignKey("SupplyRequest")]
         public int SupplyRequestId { get; set; }
         public SupplyRequest supplyRequest { get; set; }
+        [ForeignKey("Note")]
         public int NoteId { get; set; }
+        public Note note { get; set; }
     }
 }

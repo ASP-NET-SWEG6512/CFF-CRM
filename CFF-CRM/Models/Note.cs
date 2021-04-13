@@ -10,7 +10,11 @@ namespace CFF_CRM.Models
         public int NoteId { get; set; }
         public string Content { get; set; }
         public string CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
         public bool Archived { get; set; }
+        public Note()
+        {
+            CreatedDate = DateTime.Now;
+        }
     }
 }

@@ -15,23 +15,23 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="StatusId" class="control-label"></label>
-                <select asp-for="StatusId" class ="form-control" asp-items="ViewBag.StatusId"></select>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="OrderItemId" class="control-label"></label>
-                <select asp-for="OrderItemId" class ="form-control" asp-items="ViewBag.OrderItemId"></select>
+                <select asp-for="OrderItemId" class="form-control" asp-items="ViewBag.OrderItemId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="SupplyRequestOriginId" class="control-label"></label>
-                <select asp-for="SupplyRequestOriginId" class ="form-control" asp-items="ViewBag.SupplyRequestOriginId"></select>
+                <select asp-for="SupplyRequestOriginId" class="form-control" asp-items="ViewBag.SupplyRequestOriginId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="SupplyRequestTypeId" class="control-label"></label>
-                <select asp-for="SupplyRequestTypeId" class ="form-control" asp-items="ViewBag.SupplyRequestTypeId"></select>
+                <select asp-for="SupplyRequestTypeId" class="form-control" asp-items="ViewBag.SupplyRequestTypeId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="ClientName" class="control-label"></label>
@@ -43,7 +43,7 @@
                 <input asp-for="OwnerName" class="form-control" />
                 <span asp-validation-for="OwnerName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>
                 <input asp-for="CreatedBy" class="form-control" />
                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
@@ -52,11 +52,17 @@
                 <label asp-for="CreatedTime" class="control-label"></label>
                 <input asp-for="CreatedTime" class="form-control" />
                 <span asp-validation-for="CreatedTime" class="text-danger"></span>
+            </div>*@
+            <label>Note Section</label>
+            <div class="form-group">
+                <textarea rows="10" name="@nameof(Note.Content)"></textarea>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+
+        <!-- Note Section-->
     </div>
 </div>
 

@@ -13,6 +13,8 @@ namespace CFF_CRM.Models
         [ForeignKey("Task")]
         public int TaskId { get; set; }
         public Task task { get; set; }
+        [ForeignKey("Note")]
         public int NoteId { get; set; }
+        public Note note { get; set; }
     }
 }

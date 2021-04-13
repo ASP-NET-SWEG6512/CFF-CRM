@@ -36,7 +36,13 @@ namespace CFF_CRM.Models
         public Priority priority { get; set; }
 
         public string CreatedBy { get; set; }
-        public DateTime CreatedTime { get; set; }
+        public DateTime? CreatedTime { get; set; }
+        public string UpdateBy { get; set; }
+        public DateTime? UpdateTime { get; set; }
 
+        public Task()
+        {
+            CreatedTime = DateTime.Now;
+        }
     }
 }

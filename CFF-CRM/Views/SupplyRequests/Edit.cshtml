@@ -49,7 +49,7 @@
                 <input asp-for="OwnerName" class="form-control" />
                 <span asp-validation-for="OwnerName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>
                 <input asp-for="CreatedBy" class="form-control" />
                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
@@ -58,7 +58,42 @@
                 <label asp-for="CreatedTime" class="control-label"></label>
                 <input asp-for="CreatedTime" class="form-control" />
                 <span asp-validation-for="CreatedTime" class="text-danger"></span>
-            </div>
+            </div>*@
+
+            <h4>Note Section</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Note ID</td>
+                        <td>Note</td>
+                        <td>CreatedBy</td>
+                        <td>CreatedDate</td>
+                        <td>Archieved</td>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var note in ViewBag.Notes)
+                        {
+                        <tr>
+                            <td>
+                                @note.NoteId
+                            </td>
+                            <td>
+                                @note.note.Content
+                            </td>
+                            <td>
+                                @note.note.CreatedBy
+                            </td>
+                            <td>
+                                @note.note.CreatedDate
+                            </td>
+                            <td>
+                                @note.note.Archived
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+            </table>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
