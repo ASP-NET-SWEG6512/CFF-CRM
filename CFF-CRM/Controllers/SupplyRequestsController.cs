@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CFF_CRM.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CFF_CRM.Controllers
 {
+    [Authorize]
     public class SupplyRequestsController : Controller
     {
         private readonly CRMContext _context;
@@ -21,7 +23,7 @@ namespace CFF_CRM.Controllers
         // GET: SupplyRequests
         public async Task<IActionResult> Index()
         {
-            var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.user);
+            var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.User);
             return View(await cRMContext.ToListAsync());
         }
 
@@ -38,7 +40,7 @@ namespace CFF_CRM.Controllers
                 .Include(s => s.status)
                 .Include(s => s.supplyRequestOrigin)
                 .Include(s => s.supplyRequestType)
-                .Include(s => s.user)
+                .Include(s => s.User)
                 .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
             if (supplyRequest == null)
             {
@@ -154,7 +156,7 @@ namespace CFF_CRM.Controllers
                 .Include(s => s.status)
                 .Include(s => s.supplyRequestOrigin)
                 .Include(s => s.supplyRequestType)
-                .Include(s => s.user)
+                .Include(s => s.User)
                 .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
             if (supplyRequest == null)
             {

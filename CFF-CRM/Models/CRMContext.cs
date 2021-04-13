@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CFF_CRM.Models
 {
-    public class CRMContext : DbContext
+    public class CRMContext : IdentityDbContext<User> 
     {
         public CRMContext(DbContextOptions<CRMContext> options) : base(options) { }
         public DbSet<OrderItem> OrderItems { get; set; }//
@@ -30,11 +31,12 @@ namespace CFF_CRM.Models
         public DbSet<TaskNote> TaskNotes { get; set; }//
         public DbSet<TaskType> TaskTypes { get; set; }//
         public DbSet<TaskUpdate> TaskUpdates { get; set; }//
-        public DbSet<User> Users { get; set; }//
+        //public DbSet<User> Users { get; set; }//
 
         // List of OrderItems
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 
             //status
             modelBuilder.Entity<Status>().HasData(

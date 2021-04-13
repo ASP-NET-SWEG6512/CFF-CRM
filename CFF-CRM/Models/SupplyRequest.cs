@@ -17,8 +17,8 @@ namespace CFF_CRM.Models
         public Status status { get; set; }
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User user { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
 
         [ForeignKey("OrderItem")]
         public int OrderItemId { get; set; }

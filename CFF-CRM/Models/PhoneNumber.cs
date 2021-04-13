@@ -13,8 +13,8 @@ namespace CFF_CRM.Models
         public int PhoneNumberId { get; set; }
         //FK user
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User user { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
 
         [ForeignKey("PhoneType")]
         public int PhoneTypeId { get; set; }

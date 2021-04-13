@@ -11,8 +11,8 @@ namespace CFF_CRM.Models
         public int PasswordResetId { get; set; }
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User user { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
         public string ResetToken { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime ExpireDate { get; set; }

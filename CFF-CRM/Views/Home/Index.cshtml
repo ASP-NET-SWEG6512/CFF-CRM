@@ -2,7 +2,61 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+    </ol>
+</nav>
+<p id="welcome">Welcome to CFF CRM!</p>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="box">
+            <a href="#">Current Support Requests</a>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="box">
+            <a href="#">Current Task Activities</a>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="box">
+            <a href="#">Current User Requests</a>
+        </div>
+    </div>
 </div>
+
+
+<style>
+    .breadcrumb { background-color: white; }
+    nav a, nav li, .breadcrumb-item.active, p {
+        color: #605858;
+    }
+    p#welcome {
+        font-size: 18px;
+        padding-left: 1rem;
+    }
+    .row {
+        margin-top: 6rem;
+    }
+    .box {
+        padding: 2rem 1rem;
+        background: #5e35b1;
+        border-radius: 20px;
+        width: 90%;
+        margin-left: 5%;
+    }
+    .box:hover {
+        background: #3C096C;
+    }
+    .box a {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .box a:hover {
+        text-decoration: none;
+    }
+</style>
+

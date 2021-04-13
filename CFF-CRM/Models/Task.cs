@@ -16,8 +16,8 @@ namespace CFF_CRM.Models
 
 
         [ForeignKey("User")]
-        public int UserId { get; set; }
-        public User user { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
 
         public string Owner { get; set; }
 

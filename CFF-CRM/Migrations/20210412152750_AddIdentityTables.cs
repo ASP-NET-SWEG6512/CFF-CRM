@@ -3,10 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CFF_CRM.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AddIdentityTables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AspNetRoles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Notes",
                 columns: table => new
@@ -169,28 +183,144 @@ namespace CFF_CRM.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "AspNetRoleClaims",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<string>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    Username = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
                     PermissionId = table.Column<int>(nullable: false),
                     SaltKey = table.Column<string>(nullable: true),
                     Timeout = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Permissions_PermissionId",
+                        name: "FK_AspNetUsers_Permissions_PermissionId",
                         column: x => x.PermissionId,
                         principalTable: "Permissions",
                         principalColumn: "PermissionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
+                    ProviderDisplayName = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    RoleId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -200,7 +330,7 @@ namespace CFF_CRM.Migrations
                 {
                     PasswordResetId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     ResetToken = table.Column<string>(nullable: true),
                     CreatedDate = table.Column<DateTime>(nullable: false),
                     ExpireDate = table.Column<DateTime>(nullable: false)
@@ -209,11 +339,11 @@ namespace CFF_CRM.Migrations
                 {
                     table.PrimaryKey("PK_PasswordResets", x => x.PasswordResetId);
                     table.ForeignKey(
-                        name: "FK_PasswordResets_Users_UserId",
+                        name: "FK_PasswordResets_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -222,7 +352,7 @@ namespace CFF_CRM.Migrations
                 {
                     PhoneNumberId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     PhoneTypeId = table.Column<int>(nullable: false),
                     PhonePriorityId = table.Column<int>(nullable: false),
                     Number = table.Column<string>(nullable: true)
@@ -243,11 +373,11 @@ namespace CFF_CRM.Migrations
                         principalColumn: "PhoneTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PhoneNumbers_Users_UserId",
+                        name: "FK_PhoneNumbers_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -257,7 +387,7 @@ namespace CFF_CRM.Migrations
                     SupplyRequestId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StatusId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     OrderItemId = table.Column<int>(nullable: false),
                     SupplyRequestOriginId = table.Column<int>(nullable: false),
                     SupplyRequestTypeId = table.Column<int>(nullable: false),
@@ -294,11 +424,11 @@ namespace CFF_CRM.Migrations
                         principalColumn: "SupplyRequestTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SupplyRequests_Users_UserId",
+                        name: "FK_SupplyRequests_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -308,7 +438,7 @@ namespace CFF_CRM.Migrations
                     TaskId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StatusId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
+                    UserId = table.Column<string>(nullable: true),
                     Owner = table.Column<string>(nullable: true),
                     RelatedId = table.Column<int>(nullable: false),
                     RelatedName = table.Column<string>(nullable: true),
@@ -345,11 +475,11 @@ namespace CFF_CRM.Migrations
                         principalColumn: "TaskTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tasks_Users_UserId",
+                        name: "FK_Tasks_AspNetUsers_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -461,9 +591,17 @@ namespace CFF_CRM.Migrations
                 values: new object[,]
                 {
                     { 1, "Preneed agreement" },
-                    { 2, "Account update/Claim form" },
+                    { 12, "Other" },
+                    { 11, "Investment election form" },
+                    { 9, "Monthly monitors" },
+                    { 8, "Funding your funeral in advance brochure" },
+                    { 7, "Planning guides" },
+                    { 10, "Service and merchandise forms" },
+                    { 5, "Postage paid envelopes" },
+                    { 4, "Return envelopes" },
                     { 3, "Itemizations form" },
-                    { 4, "Return envelopes" }
+                    { 2, "Account update/Claim form" },
+                    { 6, "Deposit tickets" }
                 });
 
             migrationBuilder.InsertData(
@@ -475,6 +613,126 @@ namespace CFF_CRM.Migrations
                     { 2, "User" },
                     { 3, "Visitor" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "PhoneTypes",
+                columns: new[] { "PhoneTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 4, "Other" },
+                    { 1, "Home" },
+                    { 2, "Mobile" },
+                    { 3, "Work" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Priorities",
+                columns: new[] { "PriorityId", "Name" },
+                values: new object[,]
+                {
+                    { 3, "Low" },
+                    { 2, "Medium" },
+                    { 1, "High" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Related",
+                columns: new[] { "RelatedId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Customer" },
+                    { 2, "Potential customer" },
+                    { 3, "Lead" },
+                    { 4, "In-house" },
+                    { 5, "Other" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Status",
+                columns: new[] { "StatusId", "Color", "Name" },
+                values: new object[,]
+                {
+                    { 4, "#ED9E1E", "On Hold" },
+                    { 3, "#10A037", "Completed" },
+                    { 5, "#DE1313", "Cancelled" },
+                    { 1, "#0d47a1", "New" },
+                    { 2, "#1a237e", "In-Process" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyRequestOrigins",
+                columns: new[] { "SupplyRequestOriginId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Phone" },
+                    { 2, "Fax" },
+                    { 3, "Email" },
+                    { 4, "Mail" },
+                    { 5, "Reginal Manager" },
+                    { 6, "Other" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SupplyRequestTypes",
+                columns: new[] { "SupplyRequestTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Vendor" },
+                    { 2, "Client" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "TaskTypes",
+                columns: new[] { "TaskTypeId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Reminder call" },
+                    { 2, "Follow-up" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetRoleClaims_RoleId",
+                table: "AspNetRoleClaims",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserClaims_UserId",
+                table: "AspNetUserClaims",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserLogins_UserId",
+                table: "AspNetUserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUserRoles_RoleId",
+                table: "AspNetUserRoles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "EmailIndex",
+                table: "AspNetUsers",
+                column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "UserNameIndex",
+                table: "AspNetUsers",
+                column: "NormalizedUserName",
+                unique: true,
+                filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_PermissionId",
+                table: "AspNetUsers",
+                column: "PermissionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Attachments_TaskId",
@@ -570,15 +828,25 @@ namespace CFF_CRM.Migrations
                 name: "IX_TaskUpdates_TaskId",
                 table: "TaskUpdates",
                 column: "TaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_PermissionId",
-                table: "Users",
-                column: "PermissionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AspNetRoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserClaims");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserLogins");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUserTokens");
+
             migrationBuilder.DropTable(
                 name: "Attachments");
 
@@ -605,6 +873,9 @@ namespace CFF_CRM.Migrations
 
             migrationBuilder.DropTable(
                 name: "TaskUpdates");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "PhonePriorities");
@@ -640,7 +911,7 @@ namespace CFF_CRM.Migrations
                 name: "TaskTypes");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

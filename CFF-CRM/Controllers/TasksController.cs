@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CFF_CRM.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CFF_CRM.Controllers
 {
+    [Authorize]
     public class TasksController : Controller
     {
         private readonly CRMContext _context;
@@ -21,7 +23,7 @@ namespace CFF_CRM.Controllers
         // GET: Tasks
         public async Task<IActionResult> Index()
         {
-            var cRMContext = _context.Tasks.Include(t => t.priority).Include(t => t.related).Include(t => t.status).Include(t => t.taskType).Include(t => t.user);
+            var cRMContext = _context.Tasks.Include(t => t.priority).Include(t => t.related).Include(t => t.status).Include(t => t.taskType).Include(t => t.User);
             return View(await cRMContext.ToListAsync());
         }
 
@@ -38,7 +40,7 @@ namespace CFF_CRM.Controllers
                 .Include(t => t.related)
                 .Include(t => t.status)
                 .Include(t => t.taskType)
-                .Include(t => t.user)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
             if (task == null)
             {
@@ -154,7 +156,7 @@ namespace CFF_CRM.Controllers
                 .Include(t => t.related)
                 .Include(t => t.status)
                 .Include(t => t.taskType)
-                .Include(t => t.user)
+                .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.TaskId == id);
             if (task == null)
             {

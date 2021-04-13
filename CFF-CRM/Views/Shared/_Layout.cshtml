@@ -14,6 +14,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <!-- google font https://fonts.google.com/?preview.text=&preview.text_type=custom -->
+    <style>
+        .brand-logo { margin-left: 10px; }
+    </style>
 </head>
 <body>
     <header>
@@ -21,9 +24,11 @@
             <div class="nav-wrapper deep-purple darken-1">
                 <a href="#" class="brand-logo">CFF CRM</a>
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="sass.html">Sass</a></li>
-                    <li><a href="badges.html">Components</a></li>
-                    <li><a href="collapsible.html">JavaScript</a></li>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="SupplyRequests" asp-action="Index">Supply Requests</a></li>
+                    <li><a asp-controller="Tasks" asp-action="Index">Tasks Management</a></li>
+                    <li><a asp-area="Admin" asp-controller="Home" asp-action="Index">Administration</a></li>
+                    <li><a asp-controller="Login" asp-action="Index">Login</a></li>
                 </ul>
             </div>
         </nav>
