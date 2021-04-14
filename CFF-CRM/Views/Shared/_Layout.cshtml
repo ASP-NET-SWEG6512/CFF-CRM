@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity 
+@inject SignInManager<User> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -15,7 +18,9 @@
 
     <!-- google font https://fonts.google.com/?preview.text=&preview.text_type=custom -->
     <style>
-        .brand-logo { margin-left: 10px; }
+        .brand-logo {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -28,7 +33,28 @@
                     <li><a asp-controller="SupplyRequests" asp-action="Index">Supply Requests</a></li>
                     <li><a asp-controller="Tasks" asp-action="Index">Tasks Management</a></li>
                     <li><a asp-area="Admin" asp-controller="Home" asp-action="Index">Administration</a></li>
-                    <li><a asp-controller="Login" asp-action="Index">Login</a></li>
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        // signed-in user - Log Out button and username 
+                        <li> 
+                            <form method="post" asp-action="Logout" asp-controller="Account" asp-area="">
+                                <input type="submit" value="Log Out" class="btn btn-outline-light" />
+                                <span class="text-light">@User.Identity.Name</span> 
+                            </form> 
+                         </li> 
+                    }
+                    else
+                    {
+                        // get current action 
+                        var action = ViewContext.RouteData.Values["action"]?.ToString();
+                        // anonymous user - Register link and Log In button 
+                        <li> 
+                            <a asp-action="Register" asp-controller="Account" asp-area="" class="nav-link">Register</a>
+                        </li>
+                        <li>
+                            <a asp-action="Login" asp-controller="Account" asp-area="" class="btn btn-outline-light">Log In</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </nav>

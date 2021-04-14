@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace CFF_CRM.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class SupplyRequestsController : Controller
     {
         private readonly CRMContext _context;

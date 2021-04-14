@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace CFF_CRM
 {
@@ -29,6 +31,8 @@ namespace CFF_CRM
             services.AddDbContext<CRMContext>(options =>
             options.UseSqlServer(
                 Configuration.GetConnectionString("CRMContext")));
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<CRMContext>().AddDefaultTokenProviders();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +53,7 @@ namespace CFF_CRM
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
