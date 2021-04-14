@@ -225,38 +225,38 @@ namespace CFF_CRM.Controllers
             return _context.SupplyRequests.Any(e => e.SupplyRequestId == id);
         }
 
-        private bool getAccess(string page,string action, string userID)
+        private bool getAccess(string page, string action, string userID)
         {
             bool access = false;
-            //find user permission
-            int permission = _context.Users.Where(u => u.Id == userID).Select(u => u.PermissionId).First();
-            //Get all user permission
-            var AllPermission = _context.PermissionRelations.Where(p => p.PermissionId == permission).Include(p => p.PermissionGroupPolicyId);
-            //action includes read,write,archive,ArchiveForOwner
-            //either Task, SupplyRequest, or Admin
-            string permissionName = _context.Permissions.Where(p => p.PermissionId == permission).Select(p => p.Name).FirstOrDefault();
-            switch (permissionName)
-            {
-                case "Administrator":
-                    access = true;
-                    break;
-                case "Visitor":
-                    if (action == "read")
-                    {
-                        access = true;
-                    }
-                    break;
-                case "User":
-                    if (page == "SupplyRequest" || page == "Task")
-                    {
-                        access = true;
-                    }
-                    break;
-                default:
-                    access = AllPermission.Any(p => p.PermissionGroupPolicy.Page == page && p.PermissionGroupPolicy.Action == action);
-                    break;
-            }
-            return access;
+            ////find user permission
+            //int permission = _context.Users.Where(u => u.Id == userID).Select(u => u.PermissionId).First();
+            ////Get all user permission
+            //var AllPermission = _context.PermissionRelations.Where(p => p.PermissionId == permission).Include(p => p.PermissionGroupPolicyId);
+            ////action includes read,write,archive,ArchiveForOwner
+            ////either Task, SupplyRequest, or Admin
+            //string permissionName = _context.Permissions.Where(p => p.PermissionId == permission).Select(p => p.Name).FirstOrDefault();
+            //switch (permissionName)
+            //{
+            //    case "Administrator":
+            //        access = true;
+            //        break;
+            //    case "Visitor":
+            //        if (action == "read")
+            //        {
+            //            access = true;
+            //        }
+            //        break;
+            //    case "User":
+            //        if (page == "SupplyRequest" || page == "Task")
+            //        {
+            //            access = true;
+            //        }
+            //        break;
+            //    default:
+            //        access = AllPermission.Any(p => p.PermissionGroupPolicy.Page == page && p.PermissionGroupPolicy.Action == action);
+            //        break;
+            //}
+            return !access;
         }
     }
 }

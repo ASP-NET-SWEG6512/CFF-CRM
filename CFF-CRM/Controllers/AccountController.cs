@@ -30,7 +30,7 @@ namespace CFF_CRM.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Username }; 
+                var user = new User { UserName = model.Username, FirstName = model.FirstName, LastName = model.LastName }; 
                 var result = await userManager.CreateAsync(user, model.Password); 
                 if (result.Succeeded)
                 {

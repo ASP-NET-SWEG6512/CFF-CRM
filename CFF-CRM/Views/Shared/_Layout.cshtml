@@ -22,6 +22,12 @@
 </head>
 <body>
     <header>
+        <ul id="dropdown-admin" class="dropdown-content">
+            <li><a asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a></li>
+            <li><a href="#!">two</a></li>
+            <li class="divider"></li>
+            <li><a href="#!">three</a></li>
+        </ul>
         <nav>
             <div class="nav-wrapper deep-purple darken-1">
                 <a href="#" class="brand-logo">CFF CRM</a>
@@ -29,7 +35,10 @@
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="SupplyRequests" asp-action="Index">Supply Requests</a></li>
                     <li><a asp-controller="Tasks" asp-action="Index">Tasks Management</a></li>
-                    <li><a class="dropdown-trigger" href="#" data-target="dropdown-admin">Administration<i class="material-icons right">arrow_drop_down</i></a></li>
+                    <li>
+                        <a class="dropdown-trigger" href="#" data-target="dropdown-admin">Administration<i class="material-icons right">arrow_drop_down</i></a>
+                        <ul cl></ul>
+                    </li>
 
                     @if (signInManager.IsSignedIn(User))
                     {

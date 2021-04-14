@@ -15,5 +15,10 @@ namespace CFF_CRM.Areas.Admin.Controllers
         {
             return View();
         }
+
+        public IActionResult Users()
+        {
+            return View();
+        }
     }
 }
