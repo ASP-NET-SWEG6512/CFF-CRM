@@ -32,23 +32,25 @@
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="SupplyRequests" asp-action="Index">Supply Requests</a></li>
                     <li><a asp-controller="Tasks" asp-action="Index">Tasks Management</a></li>
-                    <li><a asp-area="Admin" asp-controller="Home" asp-action="Index">Administration</a></li>
+                    <li><a class="dropdown-trigger" href="#" data-target="dropdown-admin">Administration<i class="material-icons right">arrow_drop_down</i></a></li>
+
                     @if (signInManager.IsSignedIn(User))
                     {
-                        // signed-in user - Log Out button and username 
-                        <li> 
+                        // signed-in user - Log Out button and username
+                        <li>
                             <form method="post" asp-action="Logout" asp-controller="Account" asp-area="">
                                 <input type="submit" value="Log Out" class="btn btn-outline-light" />
-                                <span class="text-light">@User.Identity.Name</span> 
-                            </form> 
-                         </li> 
+                                <span class="text-light">@User.Identity.Name</span>
+                            </form>
+                        </li>
+
                     }
                     else
                     {
-                        // get current action 
+                        // get current action
                         var action = ViewContext.RouteData.Values["action"]?.ToString();
-                        // anonymous user - Register link and Log In button 
-                        <li> 
+                        // anonymous user - Register link and Log In button
+                        <li>
                             <a asp-action="Register" asp-controller="Account" asp-area="" class="nav-link">Register</a>
                         </li>
                         <li>
@@ -75,7 +77,11 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         M.AutoInit();
+        $(document).ready(
+            $(".dropdown-trigger").dropdown({ hover: false })
+        );
     </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+
