@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<CFF_CRM.Models.SupplyRequest>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Supply Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Supply Request List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="float-right btn btn-primary" asp-action="Create">Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -50,11 +50,11 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.status.StatusId)
+                <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.orderItem.Name)
             </td>

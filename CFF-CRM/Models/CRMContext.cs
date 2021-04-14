@@ -13,6 +13,7 @@ namespace CFF_CRM.Models
         public DbSet<OrderItem> OrderItems { get; set; }//
         public DbSet<Permission> Permissions { get; set; }//
         public DbSet<PermissionGroupPolicy> PermissionGroupPolicies { get; set; }//
+        public DbSet<PermissionRelation> PermissionRelations { get; set; }//
         public DbSet<Attachment> Attachments { get; set; }//
         public DbSet<Note> Notes { get; set; }//
         public DbSet<PasswordReset> PasswordResets { get; set; }//

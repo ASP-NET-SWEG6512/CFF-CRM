@@ -7,12 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CFF_CRM.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace CFF_CRM.Controllers
 {
     //[Authorize]
     public class SupplyRequestsController : Controller
     {
+        private UserManager<User> userManager;
         private readonly CRMContext _context;
 
         public SupplyRequestsController(CRMContext context)
@@ -23,6 +25,13 @@ namespace CFF_CRM.Controllers
         // GET: SupplyRequests
         public async Task<IActionResult> Index()
         {
+            //Check user permission
+
+            string userId = "";
+            if (!getAccess("SupplyRequest", "read", userId))
+            {
+                return RedirectToAction("Index","Home");
+            }
             var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.User);
             return View(await cRMContext.ToListAsync());
         }
@@ -70,7 +79,11 @@ namespace CFF_CRM.Controllers
         {
 
             //Check user permission
-
+            string userId = "";
+            if (!getAccess("SupplyRequest", "write", userId))
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             supplyRequest.CreatedBy = "Prathna Pel"; //Get from user
             supplyRequest.CreatedTime = DateTime.Now;
@@ -82,7 +95,7 @@ namespace CFF_CRM.Controllers
                 //Add note to db
                 if (supplyRequest.StatusId == 2)
                 {
-                    int noteID = _context.Add(note).Entity.NoteId;
+                    _context.Add(note);
                     await _context.SaveChangesAsync();
                     _context.Add(new SupplyRequestNote { SupplyRequestId = supplyRequest.SupplyRequestId, NoteId = note.NoteId });
                     await _context.SaveChangesAsync();
@@ -127,6 +140,13 @@ namespace CFF_CRM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest, Note note)
         {
+            //Check user permission
+            string userId = "";
+            if (!getAccess("SupplyRequest", "write", userId))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            //Check id
             if (id != supplyRequest.SupplyRequestId)
             {
                 return NotFound();
@@ -167,42 +187,76 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var supplyRequest = await _context.SupplyRequests
-                .Include(s => s.orderItem)
-                .Include(s => s.status)
-                .Include(s => s.supplyRequestOrigin)
-                .Include(s => s.supplyRequestType)
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
-            if (supplyRequest == null)
-            {
-                return NotFound();
-            }
+        //    var supplyRequest = await _context.SupplyRequests
+        //        .Include(s => s.orderItem)
+        //        .Include(s => s.status)
+        //        .Include(s => s.supplyRequestOrigin)
+        //        .Include(s => s.supplyRequestType)
+        //        .Include(s => s.User)
+        //        .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
+        //    if (supplyRequest == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(supplyRequest);
-        }
+        //    return View(supplyRequest);
+        //}
 
-        // POST: SupplyRequests/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var supplyRequest = await _context.SupplyRequests.FindAsync(id);
-            _context.SupplyRequests.Remove(supplyRequest);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //// POST: SupplyRequests/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var supplyRequest = await _context.SupplyRequests.FindAsync(id);
+        //    _context.SupplyRequests.Remove(supplyRequest);
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool SupplyRequestExists(int id)
         {
             return _context.SupplyRequests.Any(e => e.SupplyRequestId == id);
+        }
+
+        private bool getAccess(string page,string action, string userID)
+        {
+            bool access = false;
+            //find user permission
+            int permission = _context.Users.Where(u => u.Id == userID).Select(u => u.PermissionId).First();
+            //Get all user permission
+            var AllPermission = _context.PermissionRelations.Where(p => p.PermissionId == permission).Include(p => p.PermissionGroupPolicyId);
+            //action includes read,write,archive,ArchiveForOwner
+            //either Task, SupplyRequest, or Admin
+            string permissionName = _context.Permissions.Where(p => p.PermissionId == permission).Select(p => p.Name).FirstOrDefault();
+            switch (permissionName)
+            {
+                case "Administrator":
+                    access = true;
+                    break;
+                case "Visitor":
+                    if (action == "read")
+                    {
+                        access = true;
+                    }
+                    break;
+                case "User":
+                    if (page == "SupplyRequest" || page == "Task")
+                    {
+                        access = true;
+                    }
+                    break;
+                default:
+                    access = AllPermission.Any(p => p.PermissionGroupPolicy.Page == page && p.PermissionGroupPolicy.Action == action);
+                    break;
+            }
+            return access;
         }
     }
 }
