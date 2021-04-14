@@ -1,7 +1,7 @@
 ﻿@model CFF_CRM.Models.SupplyRequest
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Supply Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,66 +10,96 @@
 <h4>SupplyRequest</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col s12">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="StatusId" class="control-label"></label>
-                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="OrderItemId" class="control-label"></label>
-                <select asp-for="OrderItemId" class="form-control" asp-items="ViewBag.OrderItemId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SupplyRequestOriginId" class="control-label"></label>
-                <select asp-for="SupplyRequestOriginId" class="form-control" asp-items="ViewBag.SupplyRequestOriginId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SupplyRequestTypeId" class="control-label"></label>
-                <select asp-for="SupplyRequestTypeId" class="form-control" asp-items="ViewBag.SupplyRequestTypeId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClientName" class="control-label"></label>
-                <input asp-for="ClientName" class="form-control" />
-                <span asp-validation-for="ClientName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="OwnerName" class="control-label"></label>
-                <input asp-for="OwnerName" class="form-control" />
-                <span asp-validation-for="OwnerName" class="text-danger"></span>
-            </div>
-            @*<div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedTime" class="control-label"></label>
-                <input asp-for="CreatedTime" class="form-control" />
-                <span asp-validation-for="CreatedTime" class="text-danger"></span>
+            <div class="row">
+                <div class="input-field col s6">
+                    <select asp-for="StatusId" asp-items="ViewBag.StatusId"></select>
+                    <label asp-for="StatusId">Status</label>
+                </div>
+                @*</div>*@
+                @*<div class="row">*@
+                @*<div class="input-field col s6">
+                <select asp-for="UserId" asp-items="ViewBag.UserId"></select>
+                <label asp-for="UserId"></label>
             </div>*@
-            <label>Note Section</label>
-            <div class="form-group">
-                <textarea rows="10" name="@nameof(Note.Content)"></textarea>
+                @*</div>*@
+                @*<div class="row">*@
+                <div class="input-field col s6">
+                    <select asp-for="OrderItemId" asp-items="ViewBag.OrderItemId"></select>
+                    <label asp-for="OrderItemId">Order Item</label>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="row">
+                <div class="input-field col s6">
+                    <select asp-for="SupplyRequestOriginId" asp-items="ViewBag.SupplyRequestOriginId"></select>
+                    <label asp-for="SupplyRequestOriginId">Supply Request Origin</label>
+                </div>
+                <div class="input-field col s6">
+                    <select asp-for="SupplyRequestTypeId" asp-items="ViewBag.SupplyRequestTypeId"></select>
+                    <label asp-for="SupplyRequestTypeId">Supply Request Type</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <i class="material-icons prefix">textsms</i>
+                    <input asp-for="ClientName" type="text" id="ClientName" class="autocomplete-client" />
+                    <label asp-for="ClientName">Client Name</label>
+                    <span asp-validation-for="ClientName" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <i class="material-icons prefix">textsms</i>
+                    <input asp-for="OwnerName" type="text" id="OwnerName" class="autocomplete-owner" />
+                    <label asp-for="OwnerName">Owner Name</label>
+                    <span asp-validation-for="OwnerName" class="text-danger"></span>
+                </div>
+            </div>
+            <!--<div class="row">-->
+            @*
+                <div class="input-field col s6">
+            <label asp-for="CreatedBy"></label>
+            <input asp-for="CreatedBy" />
+            <span asp-validation-for="CreatedBy" class="text-danger"></span>
+        </div>
+        </div>
+                <div class="input-field col s6">
+            <label asp-for="CreatedTime"></label>
+            <input asp-for="CreatedTime" />
+            <span asp-validation-for="CreatedTime" class="text-danger"></span>
+            *@
+            <!--</div>-->
+            <!-- Note Section-->
+            <div class="row">
+                <div class="input-field col s12">
+                    <span class="material-icons prefix">edit</span>
+                    <textarea class="materialize-textarea" name="@nameof(Note.Content)"></textarea>
+                    <label>Note Section</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+                <div>
+                    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+                </div>
             </div>
         </form>
-
-        <!-- Note Section-->
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    
+    @*Autocomplete data*@
+    <script>
+        $('input.autocomplete-owner').autocomplete({
+            data: { Apple: null, Microsoft: null, Google: null }
+        });
+        $('input.autocomplete-client').autocomplete({
+            data: { Apple: null, Microsoft: null, Google: null }
+        });
+    </script>
 }
