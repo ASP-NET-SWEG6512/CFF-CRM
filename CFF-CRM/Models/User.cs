@@ -12,8 +12,8 @@ namespace CFF_CRM.Models
         //public int UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        //permission
-        public int PermissionId { get; set; }
+        //permission  //may not need Permission cuz Identity provided Permission functionalities
+        public int? PermissionId { get; set; }
         public Permission Permission { get; set; }
 
         public string SaltKey { get; set; }
