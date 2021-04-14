@@ -11,15 +11,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CFF_CRM.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class SupplyRequestsController : Controller
     {
-        private UserManager<User> userManager;
+        private UserManager<User> _userManager;
         private readonly CRMContext _context;
 
-        public SupplyRequestsController(CRMContext context)
+        public SupplyRequestsController(CRMContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: SupplyRequests
@@ -27,7 +28,8 @@ namespace CFF_CRM.Controllers
         {
             //Check user permission
 
-            string userId = "";
+            string userId = _userManager.GetUserId(HttpContext.User);
+
             if (!getAccess("SupplyRequest", "read", userId))
             {
                 return RedirectToAction("Index","Home");
@@ -66,7 +68,10 @@ namespace CFF_CRM.Controllers
             ViewData["StatusId"] = new SelectList(_context.Status, "StatusId", "Name");
             ViewData["SupplyRequestOriginId"] = new SelectList(_context.SupplyRequestOrigins, "SupplyRequestOriginId", "Name");
             ViewData["SupplyRequestTypeId"] = new SelectList(_context.SupplyRequestTypes, "SupplyRequestTypeId", "Name");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
+
+            ViewData["Owner"] = _context.SupplyRequests.Select(s => s.OwnerName).Distinct().ToList();
+            ViewData["Client"] = _context.SupplyRequests.Select(s => s.ClientName).Distinct().ToList();
+
             return View();
         }
 
@@ -79,13 +84,15 @@ namespace CFF_CRM.Controllers
         {
 
             //Check user permission
-            string userId = "";
-            if (!getAccess("SupplyRequest", "write", userId))
+            User user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (!getAccess("SupplyRequest", "write", user.Id))
             {
                 return RedirectToAction(nameof(Index));
             }
+            supplyRequest.UserId = user.Id;
 
-            supplyRequest.CreatedBy = "Prathna Pel"; //Get from user
+            supplyRequest.CreatedBy = user.UserName; //Get from user
             supplyRequest.CreatedTime = DateTime.Now;
             if (ModelState.IsValid)
             {
@@ -106,7 +113,10 @@ namespace CFF_CRM.Controllers
             ViewData["StatusId"] = new SelectList(_context.Status, "StatusId", "Name", supplyRequest.StatusId);
             ViewData["SupplyRequestOriginId"] = new SelectList(_context.SupplyRequestOrigins, "SupplyRequestOriginId", "Name", supplyRequest.SupplyRequestOriginId);
             ViewData["SupplyRequestTypeId"] = new SelectList(_context.SupplyRequestTypes, "SupplyRequestTypeId", "Name", supplyRequest.SupplyRequestTypeId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", supplyRequest.UserId);
+
+            ViewData["Owner"] = _context.SupplyRequests.Select(s => s.OwnerName).Distinct().ToList();
+            ViewData["Client"] = _context.SupplyRequests.Select(s => s.ClientName).Distinct().ToList();
+
             return View(supplyRequest);
         }
 
@@ -127,7 +137,10 @@ namespace CFF_CRM.Controllers
             ViewData["StatusId"] = new SelectList(_context.Status, "StatusId", "Name", supplyRequest.StatusId);
             ViewData["SupplyRequestOriginId"] = new SelectList(_context.SupplyRequestOrigins, "SupplyRequestOriginId", "Name", supplyRequest.SupplyRequestOriginId);
             ViewData["SupplyRequestTypeId"] = new SelectList(_context.SupplyRequestTypes, "SupplyRequestTypeId", "Name", supplyRequest.SupplyRequestTypeId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", supplyRequest.UserId);
+
+            ViewData["Owner"] = _context.SupplyRequests.Select(s => s.OwnerName).Distinct().ToList();
+            ViewData["Client"] = _context.SupplyRequests.Select(s => s.ClientName).Distinct().ToList();
+
             //View bage for note
             ViewBag.Notes = await _context.SupplyRequestNotes.Include(sn => sn.note).Where(sn => sn.SupplyRequestId == id).ToListAsync();
             return View(supplyRequest);
@@ -140,13 +153,15 @@ namespace CFF_CRM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest, Note note)
         {
+            //Get Current user
+            User user = await _userManager.GetUserAsync(HttpContext.User);
+
             //Check user permission
-            string userId = "";
-            if (!getAccess("SupplyRequest", "write", userId))
+            if (!getAccess("SupplyRequest", "write", user.Id))
             {
                 return RedirectToAction(nameof(Index));
             }
-            //Check id
+            //Check supply request id
             if (id != supplyRequest.SupplyRequestId)
             {
                 return NotFound();
@@ -156,12 +171,20 @@ namespace CFF_CRM.Controllers
             {
                 try
                 {
-                    //Add Update By
-                    supplyRequest.UpdateBy = "Remove It";
+                    //Add Update By current user
+                    supplyRequest.UpdateBy = user.UserName;
                     //Add Update Time
                     supplyRequest.UpdateTime = DateTime.Now;
                     _context.Update(supplyRequest);
                     await _context.SaveChangesAsync();
+
+                    if (supplyRequest.StatusId == 2)
+                    {
+                        _context.Add(note);
+                        await _context.SaveChangesAsync();
+                        _context.Add(new SupplyRequestNote { SupplyRequestId = supplyRequest.SupplyRequestId, NoteId = note.NoteId });
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -180,45 +203,48 @@ namespace CFF_CRM.Controllers
             ViewData["StatusId"] = new SelectList(_context.Status, "StatusId", "Name", supplyRequest.StatusId);
             ViewData["SupplyRequestOriginId"] = new SelectList(_context.SupplyRequestOrigins, "SupplyRequestOriginId", "Name", supplyRequest.SupplyRequestOriginId);
             ViewData["SupplyRequestTypeId"] = new SelectList(_context.SupplyRequestTypes, "SupplyRequestTypeId", "Name", supplyRequest.SupplyRequestTypeId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", supplyRequest.UserId);
+
+            ViewData["Owner"] = _context.SupplyRequests.Select(s => s.OwnerName).Distinct().ToList();
+            ViewData["Client"] = _context.SupplyRequests.Select(s => s.ClientName).Distinct().ToList();
+
             //View bage for note
             ViewBag.Notes = await _context.SupplyRequestNotes.Include(sn => sn.note).Where(sn => sn.SupplyRequestId == id).ToListAsync();
             return View(supplyRequest);
         }
 
         // GET: SupplyRequests/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //    var supplyRequest = await _context.SupplyRequests
-        //        .Include(s => s.orderItem)
-        //        .Include(s => s.status)
-        //        .Include(s => s.supplyRequestOrigin)
-        //        .Include(s => s.supplyRequestType)
-        //        .Include(s => s.User)
-        //        .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
-        //    if (supplyRequest == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var supplyRequest = await _context.SupplyRequests
+                .Include(s => s.orderItem)
+                .Include(s => s.status)
+                .Include(s => s.supplyRequestOrigin)
+                .Include(s => s.supplyRequestType)
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(m => m.SupplyRequestId == id);
+            if (supplyRequest == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(supplyRequest);
-        //}
+            return View(supplyRequest);
+        }
 
-        //// POST: SupplyRequests/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    var supplyRequest = await _context.SupplyRequests.FindAsync(id);
-        //    _context.SupplyRequests.Remove(supplyRequest);
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        // POST: SupplyRequests/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var supplyRequest = await _context.SupplyRequests.FindAsync(id);
+            _context.SupplyRequests.Remove(supplyRequest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
         private bool SupplyRequestExists(int id)
         {

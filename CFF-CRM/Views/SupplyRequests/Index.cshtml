@@ -10,7 +10,7 @@
 <p>
     <a class="float-right btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table id="supply_request" class="table">
     <thead>
         <tr>
             <th>
@@ -47,47 +47,55 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.orderItem.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.supplyRequestOrigin.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.supplyRequestType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdateTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SupplyRequestId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SupplyRequestId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.User.Id)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.orderItem.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.supplyRequestOrigin.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.supplyRequestType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OwnerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateTime)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SupplyRequestId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SupplyRequestId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#supply_request').DataTable();
+        });
+    </script>
+}

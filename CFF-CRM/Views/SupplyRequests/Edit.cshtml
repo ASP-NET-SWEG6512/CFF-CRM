@@ -1,5 +1,5 @@
 ﻿@model CFF_CRM.Models.SupplyRequest
-
+@using Microsoft.AspNetCore.Identity
 @{
     ViewData["Title"] = "Edit Supply Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,27 +14,25 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SupplyRequestId" />
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="CreatedBy" />
+            <input type="hidden" asp-for="CreatedTime" />
             <div class="row">
                 <div class="input-field col s6">
                     <select asp-for="StatusId" asp-items="ViewBag.StatusId"></select>
-                    <label asp-for="StatusId"></label>
+                    <label asp-for="StatusId">Status</label>
                     <span asp-validation-for="StatusId" class="text-danger"></span>
                 </div>
-                @*<div class="input-field col s6">
-                <select asp-for="UserId" asp-items="ViewBag.UserId"></select>
-                <label asp-for="UserId"></label>
-                <span asp-validation-for="UserId" class="text-danger"></span>
-            </div>*@
                 <div class="input-field col s6">
                     <select asp-for="OrderItemId" asp-items="ViewBag.OrderItemId"></select>
-                    <label asp-for="OrderItemId"></label>
+                    <label asp-for="OrderItemId">Order Item</label>
                     <span asp-validation-for="OrderItemId" class="text-danger"></span>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s6">
                     <select asp-for="SupplyRequestOriginId" asp-items="ViewBag.SupplyRequestOriginId"></select>
-                    <label asp-for="SupplyRequestOriginId"></label>
+                    <label asp-for="SupplyRequestOriginId">Supply Request Origin</label>
                     <span asp-validation-for="SupplyRequestOriginId" class="text-danger"></span>
                 </div>
                 <div class="input-field col s6">
@@ -59,22 +57,10 @@
                     <span asp-validation-for="OwnerName" class="text-danger"></span>
                 </div>
             </div>
-            @*<div class="input-field col s6">
-            <label asp-for="CreatedBy"></label>
-            <input asp-for="CreatedBy" />
-            <span asp-validation-for="CreatedBy" class="text-danger"></span>
-        </div>
-        <div class="input-field col s6">
-            <label asp-for="CreatedTime"></label>
-            <input asp-for="CreatedTime" />
-            <span asp-validation-for="CreatedTime" class="text-danger"></span>
-        </div>*@
-
             <h4>Note Section</h4>
-            <table>
+            <table id="noteTable">
                 <thead>
                     <tr>
-                        <td>Note ID</td>
                         <td>Note</td>
                         <td>CreatedBy</td>
                         <td>CreatedDate</td>
@@ -85,10 +71,7 @@
                     @foreach (var note in ViewBag.Notes)
                     {
                         <tr>
-                            <td>
-                                @note.NoteId
-                            </td>
-                            <td>
+                            <td contenteditable='true'>
                                 @note.note.Content
                             </td>
                             <td>
@@ -98,6 +81,7 @@
                                 @note.note.CreatedDate
                             </td>
                             <td>
+                                <input type="checkbox" />
                                 @note.note.Archived
                             </td>
                         </tr>
@@ -107,7 +91,7 @@
             <div class="row">
                 <div class="input-field col s12">
                     <span class="material-icons prefix">edit</span>
-                    <textarea class="materialize-textarea" name="@nameof(Note.Content)"></textarea>
+                    <textarea id="tempNote" class="materialize-textarea" name="@nameof(Note.Content)"></textarea>
                     <label>Note Section</label>
                 </div>
             </div>
@@ -121,7 +105,6 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     @*Autocomplete data*@

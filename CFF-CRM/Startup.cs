@@ -32,7 +32,12 @@ namespace CFF_CRM
             options.UseSqlServer(
                 Configuration.GetConnectionString("CRMContext")));
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<CRMContext>().AddDefaultTokenProviders();
-
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Account/Login";
+                options.LogoutPath = $"/Account/Logout";
+                options.AccessDeniedPath = $"/";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
