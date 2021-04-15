@@ -49,18 +49,20 @@
         <div>
             <label>Archieved?</label>
             <input type="checkbox" id="Archieved" name="@nameof(Note.Archived)" value="true" disabled>
+            <small class="form-text text-muted">Archieving the note will enable access to view them.</small>
         </div>
         <div class="float-right">
-                <input type="submit" value="Create" class="btn btn-primary ml-2" />
-                <a class="btn btn-primary" asp-action="Index">Back to List</a>
+            <input type="submit" value="Create" class="btn btn-primary ml-2" />
+            <a class="btn btn-primary" asp-action="Index">Back to List</a>
         </div>
     </form>
 </div>
 <style>
-    .autocomplete-client,.autocomplete-owner, .tt-query, .tt-hint {
+    .autocomplete-client, .autocomplete-owner, .tt-query, .tt-hint {
         border: 2px solid #CCCCCC;
         width: 396px;
     }
+
     .tt-menu {
         background-color: #FFFFFF;
         border: 1px solid rgba(0, 0, 0, 0.2);
@@ -75,7 +77,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
     @*Autocomplete data*@
-<script type="text/javascript">
+    <script type="text/javascript">
     var ownerText = @Html.Raw(Json.Serialize(@ViewBag.Owner));
     var clientText = @Html.Raw(Json.Serialize(@ViewBag.Client));
     var ownerText = new Bloodhound({
@@ -129,5 +131,5 @@
             archieved.disabled = true;
         }
     });
-</script>
+    </script>
 }

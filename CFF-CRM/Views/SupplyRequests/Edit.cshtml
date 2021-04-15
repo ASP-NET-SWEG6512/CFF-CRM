@@ -3,75 +3,83 @@
 @{
     ViewData["Title"] = "Edit Supply Request";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.srID = Model.SupplyRequestId;
 }
 
 <h1>Edit</h1>
 
-<h4>SupplyRequest</h4>
-<hr />
-<div class="row">
-    <div class="col s12">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="SupplyRequestId" />
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="CreatedBy" />
-            <input type="hidden" asp-for="CreatedTime" />
-            <div class="row">
-                <div class="input-field col s6">
-                    <select asp-for="StatusId" asp-items="ViewBag.StatusId"></select>
-                    <label asp-for="StatusId">Status</label>
-                    <span asp-validation-for="StatusId" class="text-danger"></span>
+<div class="card">
+    <div class="card-body">
+        <h4>SupplyRequest</h4>
+        <hr />
+        <div class="form center">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="SupplyRequestId" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="CreatedBy" />
+                <input type="hidden" asp-for="CreatedTime" />
+                <div class="form-group">
+                    <label asp-for="StatusId">Status:</label>
+                    <select onchange="loadingPage()" class="form-control" asp-for="StatusId" asp-items="ViewBag.StatusId"></select>
                 </div>
-                <div class="input-field col s6">
-                    <select asp-for="OrderItemId" asp-items="ViewBag.OrderItemId"></select>
-                    <label asp-for="OrderItemId">Order Item</label>
-                    <span asp-validation-for="OrderItemId" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="OrderItemId">Order Item:</label>
+                    <select class="form-control" asp-for="OrderItemId" asp-items="ViewBag.OrderItemId"></select>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <select asp-for="SupplyRequestOriginId" asp-items="ViewBag.SupplyRequestOriginId"></select>
-                    <label asp-for="SupplyRequestOriginId">Supply Request Origin</label>
-                    <span asp-validation-for="SupplyRequestOriginId" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="SupplyRequestOriginId">Supply Request Origin:</label>
+                    <select class="form-control" asp-for="SupplyRequestOriginId" asp-items="ViewBag.SupplyRequestOriginId"></select>
                 </div>
-                <div class="input-field col s6">
-                    <select asp-for="SupplyRequestTypeId" asp-items="ViewBag.SupplyRequestTypeId"></select>
-                    <label asp-for="SupplyRequestTypeId"></label>
-                    <span asp-validation-for="SupplyRequestTypeId" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="SupplyRequestTypeId">Supply Request Type:</label>
+                    <select class="form-control" asp-for="SupplyRequestTypeId" asp-items="ViewBag.SupplyRequestTypeId"></select>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">textsms</i>
-                    <input asp-for="ClientName" type="text" id="ClientName" class="autocomplete-client" />
-                    <label asp-for="ClientName">Client Name</label>
-                    <span asp-validation-for="ClientName" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="ClientName">Client Name:</label>
+                        <br />
+                        <input type="text" class="autocomplete-client form-control" aria-describedby="autocom" asp-for="ClientName" />
+                        <small id="autocom" class="form-text text-muted">Autocomplete from previously entered data</small>
+                        <span asp-validation-for="ClientName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="OwnerName">Owner Name:</label>
+                        <br />
+                        <input type="text" class="autocomplete-owner form-control" asp-for="OwnerName" />
+                        <span asp-validation-for="OwnerName" class="text-danger"></span>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s6">
-                    <i class="material-icons prefix">textsms</i>
-                    <input asp-for="OwnerName" type="text" id="OwnerName" class="autocomplete-owner" />
-                    <label asp-for="OwnerName">Owner Name</label>
-                    <span asp-validation-for="OwnerName" class="text-danger"></span>
+                <div class="float-right">
+                    <input id="submitSupply" type="submit" value="Edit" class="btn btn-primary ml-2" />
                 </div>
-            </div>
-            <h4>Note Section</h4>
-            <table id="noteTable">
-                <thead>
-                    <tr>
-                        <td>Note</td>
-                        <td>CreatedBy</td>
-                        <td>CreatedDate</td>
-                        <td>Archieved</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var note in ViewBag.Notes)
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card mt-2">
+    <div class="card-body">
+        <!--Note table-->
+        <h4>Note Section</h4>
+        <p class="text-right">
+            <button class="btn btn-outline-dark btn-sm" type="button" data-toggle="modal" data-target="#exampleModal"><i class="bi bi-plus-circle"></i> New Note</button>
+        </p>
+        <table id="noteTable" class="table table-sm">
+            <thead>
+                <tr>
+                    <td>Note</td>
+                    <td>CreatedBy</td>
+                    <td>CreatedDate</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var note in ViewBag.Notes)
+                {
+                    if (note.note.Archived)
                     {
                         <tr>
-                            <td contenteditable='true'>
+                            <td>
                                 @note.note.Content
                             </td>
                             <td>
@@ -80,40 +88,131 @@
                             <td>
                                 @note.note.CreatedDate
                             </td>
-                            <td>
-                                <input type="checkbox" />
-                                @note.note.Archived
-                            </td>
+                            <td>Edit</td>
                         </tr>
                     }
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="input-field col s12">
-                    <span class="material-icons prefix">edit</span>
-                    <textarea id="tempNote" class="materialize-textarea" name="@nameof(Note.Content)"></textarea>
-                    <label>Note Section</label>
-                </div>
-            </div>
-            <div class="input-field col s6">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+<div class="float-right mt-2">
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    </div>
+    <!--Note table end-->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Note</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Note Section-->
+                <form asp-action="CreateNoteFromEdit" asp-route-id="@Model.SupplyRequestId">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Add New Note</label>
+                            <textarea class="form-control" id="Content" rows="3" name="@nameof(Note.Content)" disabled></textarea>
+                        </div>
+                        <div>
+                            <label>Archieved?</label>
+                            <input type="checkbox" id="Archieved" name="@nameof(Note.Archived)" value="true" disabled>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input type="submit" value="Create" class="btn btn-primary"/>
+                    </div>
+                </form>
+                <!--Not section end-->
+            </div>
+        </div>
+    </div>
+    <!--Modal End-->
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @*Autocomplete data*@
-    <script>
-        $('input.autocomplete-owner').autocomplete({
-            data: { Apple: null, Microsoft: null, Google: null }
+
+    <style>
+        .autocomplete-client, .autocomplete-owner, .tt-query, .tt-hint {
+            border: 2px solid #CCCCCC;
+            width: 396px;
+        }
+
+        .tt-menu {
+            background-color: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 5px;
+            padding: 8px 0;
+            width: 396px;
+        }
+    </style>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        @*Autocomplete data*@
+        <script type="text/javascript">
+    var ownerText = @Html.Raw(Json.Serialize(@ViewBag.Owner));
+    var clientText = @Html.Raw(Json.Serialize(@ViewBag.Client));
+    var ownerText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: ownerText
+    });
+    var clientText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: clientText
+    });
+    $('.autocomplete-owner').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'owner',
+            source: ownerText
         });
-        $('input.autocomplete-client').autocomplete({
-            data: { Apple: null, Microsoft: null, Google: null }
+    $('.autocomplete-client').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'client',
+            source: clientText
         });
-    </script>
-}
+    function loadingPage() {
+        var content = document.getElementById('Content');
+        var archieved = document.getElementById('Archieved');
+        if ($('#StatusId').val() == 2) {
+            content.disabled = false;
+            archieved.disabled = false;
+        } else {
+            content.value = null;
+            content.disabled = true;
+            archieved.checked = false;
+            archieved.disabled = true;
+        }
+    };
+    $().ready(loadingPage());
+    $("#other").click(function () {
+        $("#target").submit();
+    });
+    $(document).ready(function () {
+        $('#noteTable').DataTable();
+    });
+        </script>
+    }

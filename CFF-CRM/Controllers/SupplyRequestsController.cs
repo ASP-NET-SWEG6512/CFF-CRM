@@ -90,17 +90,20 @@ namespace CFF_CRM.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
+            //set value to supply request
             supplyRequest.UserId = user.Id;
 
             supplyRequest.CreatedBy = user.UserName; //Get from user
-            supplyRequest.CreatedTime = DateTime.Now;
+            supplyRequest.CreatedTime = DateTime.Now; //default
             if (ModelState.IsValid)
             {
+
+                //add supply request to db
                 _context.Add(supplyRequest);
-                
                 await _context.SaveChangesAsync();
+
                 //Add note to db
-                if (supplyRequest.StatusId == 2)
+                if (supplyRequest.StatusId == 2 && note.Content != null)
                 {
                     _context.Add(note);
                     await _context.SaveChangesAsync();
@@ -151,7 +154,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest, Note note)
+        public async Task<IActionResult> Edit(int id, [Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest)
         {
             //Get Current user
             User user = await _userManager.GetUserAsync(HttpContext.User);
@@ -177,14 +180,6 @@ namespace CFF_CRM.Controllers
                     supplyRequest.UpdateTime = DateTime.Now;
                     _context.Update(supplyRequest);
                     await _context.SaveChangesAsync();
-
-                    if (supplyRequest.StatusId == 2)
-                    {
-                        _context.Add(note);
-                        await _context.SaveChangesAsync();
-                        _context.Add(new SupplyRequestNote { SupplyRequestId = supplyRequest.SupplyRequestId, NoteId = note.NoteId });
-                        await _context.SaveChangesAsync();
-                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -244,6 +239,31 @@ namespace CFF_CRM.Controllers
             _context.SupplyRequests.Remove(supplyRequest);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateNoteFromEdit([FromRoute] int id, Note note)
+        {
+            var supplyRequest = _context.SupplyRequests.First(s => s.SupplyRequestId == id);
+            if (supplyRequest == null)
+            {
+                return NotFound();
+            }
+            if (supplyRequest.StatusId == 2 && note.Content != null)
+            {
+                User user = await _userManager.GetUserAsync(HttpContext.User);
+                note.CreatedBy = user.UserName;
+                note.CreatedDate = DateTime.Now;
+                _context.Notes.Add(note);
+
+                //save note
+                await _context.SaveChangesAsync();
+
+                //save change to Supply Request Note
+                _context.SupplyRequestNotes.Add(new SupplyRequestNote { SupplyRequestId = supplyRequest.SupplyRequestId, NoteId = note.NoteId});
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Edit), new { ID = id });
         }
 
         private bool SupplyRequestExists(int id)
