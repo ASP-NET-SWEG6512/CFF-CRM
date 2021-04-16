@@ -36,7 +36,7 @@
                     <li><a asp-controller="Home" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
                     <li><a asp-controller="SupplyRequests" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-card-list"></i> Supply Request</a></li>
                     <li><a asp-controller="Tasks" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-clipboard-check"></i> Task Management</a></li>
-                    <li><a asp-area="Admin" asp-controller="Users" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-people"></i> Administration</a></li>
+                    <li><a asp-area="Admin" asp-controller="User" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-people"></i> Administration</a></li>
                 </ul>
 
 
@@ -79,11 +79,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    @*<footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2021 - CFF_CRM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
