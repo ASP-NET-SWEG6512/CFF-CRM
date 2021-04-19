@@ -24,18 +24,12 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests
-        public async Task<IActionResult> Index(string? UserName)
+        public async Task<IActionResult> Index(string? username)
         {
-            //Check user permission
-
+            //Only query from task that the user has created
             string userId = _userManager.GetUserId(HttpContext.User);
-
-            if (!getAccess("SupplyRequest", "read", userId))
-            {
-                return RedirectToAction("Index","Home");
-            }
             var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.User).Where(s => s.UserId == userId);
-            ViewBag.idResult = UserName;
+            ViewBag.Result = username;
             return View(await cRMContext.ToListAsync());
         }
 
@@ -86,11 +80,6 @@ namespace CFF_CRM.Controllers
 
             //Check user permission
             User user = await _userManager.GetUserAsync(HttpContext.User);
-
-            if (!getAccess("SupplyRequest", "write", user.Id))
-            {
-                return RedirectToAction(nameof(Index));
-            }
             //set value to supply request
             supplyRequest.UserId = user.Id;
 
@@ -106,6 +95,8 @@ namespace CFF_CRM.Controllers
                 //Add note to db
                 if (supplyRequest.StatusId == 2 && note.Content != null)
                 {
+                    note.CreatedBy = user.UserName;
+                    note.CreatedDate = DateTime.Now;
                     _context.Add(note);
                     await _context.SaveChangesAsync();
                     _context.Add(new SupplyRequestNote { SupplyRequestId = supplyRequest.SupplyRequestId, NoteId = note.NoteId });
@@ -159,12 +150,6 @@ namespace CFF_CRM.Controllers
         {
             //Get Current user
             User user = await _userManager.GetUserAsync(HttpContext.User);
-
-            //Check user permission
-            if (!getAccess("SupplyRequest", "write", user.Id))
-            {
-                return RedirectToAction(nameof(Index));
-            }
             //Check supply request id
             if (id != supplyRequest.SupplyRequestId)
             {
@@ -304,47 +289,13 @@ namespace CFF_CRM.Controllers
             _context.SupplyRequests.Update(supplyRequest);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index), new { ID = UserName });
+            return RedirectToAction(nameof(Index), new { USERNAME = UserName });
         }
 
 
         private bool SupplyRequestExists(int id)
         {
             return _context.SupplyRequests.Any(e => e.SupplyRequestId == id);
-        }
-
-        private bool getAccess(string page, string action, string userID)
-        {
-            bool access = false;
-            ////find user permission
-            //int permission = _context.Users.Where(u => u.Id == userID).Select(u => u.PermissionId).First();
-            ////Get all user permission
-            //var AllPermission = _context.PermissionRelations.Where(p => p.PermissionId == permission).Include(p => p.PermissionGroupPolicyId);
-            ////action includes read,write,archive,ArchiveForOwner
-            ////either Task, SupplyRequest, or Admin
-            //string permissionName = _context.Permissions.Where(p => p.PermissionId == permission).Select(p => p.Name).FirstOrDefault();
-            //switch (permissionName)
-            //{
-            //    case "Administrator":
-            //        access = true;
-            //        break;
-            //    case "Visitor":
-            //        if (action == "read")
-            //        {
-            //            access = true;
-            //        }
-            //        break;
-            //    case "User":
-            //        if (page == "SupplyRequest" || page == "Task")
-            //        {
-            //            access = true;
-            //        }
-            //        break;
-            //    default:
-            //        access = AllPermission.Any(p => p.PermissionGroupPolicy.Page == page && p.PermissionGroupPolicy.Action == action);
-            //        break;
-            //}
-            return !access;
         }
     }
 }

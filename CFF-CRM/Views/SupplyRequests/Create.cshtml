@@ -47,13 +47,13 @@
             <textarea class="form-control" id="Content" rows="3" name="@nameof(Note.Content)" disabled></textarea>
         </div>
         <div>
-            <label>Archieved?</label>
-            <input type="checkbox" id="Archieved" name="@nameof(Note.Archived)" value="true" disabled>
+            <label>Archived?</label>
+            <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
             <small class="form-text text-muted">Archieving the note will enable access to view them.</small>
         </div>
         <div class="float-right">
-            <a class="btn btn-secondary" asp-action="Index">Back to List</a>
             <input type="submit" value="Create" class="btn btn-primary ml-2" />
+            <a class="btn btn-secondary" asp-action="Index">Back to List</a>
         </div>
     </form>
 </div>

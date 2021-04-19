@@ -8,16 +8,15 @@
 <h1>Supply Request List</h1>
 
 
-@if (ViewBag.idResult != null)
+@if (ViewBag.Result != null)
 {
 <div class="alert alert-success" role="alert">
-    You can successfully transfer ownership!
+    You have successfully transfer ownership!
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 }
-@*<div id="msgfailbase"></div>*@
 
 <div id="msgfail" class="alert alert-danger" role="alert" style="display: none;">
     Change owner failed! You need enter a username to proceed changing ownership.
@@ -28,7 +27,7 @@
 
 <form id="changeownerform" method="post">
     <label>New Owner:</label>
-    <input value="@ViewBag.idResult" id="UserName" name="UserName" placeholder="Username" required />
+    <input id="UserName" name="UserName" placeholder="Username" required value="@(ViewBag.Result)"/>
 </form>
 <p class="text-right">
     <a class="btn btn-primary" asp-action="Create">Create New</a>
@@ -44,10 +43,10 @@
                 Order Item
             </th>
             <th>
-                Supply Request Origin
+                Origin
             </th>
             <th>
-                Supply Request Type
+                Type
             </th>
             <th>
                 Client Name
@@ -78,9 +77,6 @@
                 <td>
                     <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.User.Id)
-                    </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.orderItem.Name)
                 </td>
@@ -132,19 +128,12 @@
             });
             $('#supply_request tbody').on('click', 'button', function () {
                 var data = table.row($(this).parents('tr')).data();
-                $(".SupplyRequestChange").val(data[0]);
                 $("#changeownerform").attr('action', '/SupplyRequests/ChangeOwner/' + data[0]);
                 var username = $("#UserName").val();
                 if (username != null && username.length > 0) {
                     $("#changeownerform").submit();
                 } else {
                     $("#msgfail").toggle();
-//                        $("#msgfailbase").html(```<div class="alert alert-danger" role="alert">
-//                    Change ownership failed!
-//                        < button type = "button" class="close msgfailclose" data - dismiss="alert" aria - label="Close" >
-//                            <span aria-hidden="true">&times;</span>
-//    </button >
-//</div >```)
                 }
                 
             });

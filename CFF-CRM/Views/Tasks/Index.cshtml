@@ -1,84 +1,139 @@
 ﻿@model IEnumerable<CFF_CRM.Models.Task>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Task";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<h1>Task List</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
+@if (ViewBag.Result != null)
+{
+    <div class="alert alert-success" role="alert">
+        You have successfully transfer ownership!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<div id="msgfail" class="alert alert-danger" role="alert" style="display: none;">
+    Change owner failed! You need enter a username to proceed changing ownership.
+    <button class="close msgfailclose">
+        <span>&times;</span>
+    </button>
+</div>
+
+<form id="changeownerform" method="post">
+    <label>New Owner:</label>
+    <input id="UserName" name="UserName" placeholder="Username" required value="@(ViewBag.Result)" />
+</form>
+<p class="text-right">
+    <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table id="task" class="table table-sm">
     <thead>
         <tr>
+            <th>TaskId</th>
             <th>
-                @Html.DisplayNameFor(model => model.status)
+                Status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                Owner
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Owner)
+                Related To
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.related)
+                Related To Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RelatedName)
+                Type
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.taskType)
+                Priority
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.priority)
+                Created By
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
+                Created Time
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedTime)
-            </th>
-            <th></th>
+            <th>Updated By</th>
+            <th>Updated Time</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.status.StatusId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Owner)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.related.RelatedId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RelatedName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.taskType.TaskTypeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.priority.PriorityId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedTime)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TaskId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TaskId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.TaskId)</td>
+                <td>
+                    <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.related.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RelatedName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.taskType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.priority.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateTime)
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.TaskId">Details</a> |
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.TaskId">Delete</a> |
+                    <button class="btn btn-sm btn-outline-primary">Change Owner</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var tasktable = $('#task').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false,
+                        "searchable": false
+                    }]
+            });
+            $('#task tbody').on('click', 'button', function () {
+                var data = tasktable.row($(this).parents('tr')).data();
+                $("#changeownerform").attr('action', '/Tasks/ChangeOwner/' + data[0]);
+                var username = $("#UserName").val();
+                if (username != null && username.length > 0) {
+                    $("#changeownerform").submit();
+                } else {
+                    $("#msgfail").toggle();
+                }
+
+            });
+            $(".msgfailclose").click(function () {
+                $("#msgfail").toggle();
+            });
+        });
+    </script>
+}
