@@ -76,7 +76,7 @@
             <tbody>
                 @foreach (var note in ViewBag.Notes)
                 {
-                    if (note.note.Archived)
+                    if (!note.note.Archived)
                     {
                         <tr>
                             <td>
@@ -88,7 +88,7 @@
                             <td>
                                 @note.note.CreatedDate
                             </td>
-                            <td>Edit</td>
+                            <td><form asp-action="ArchiveNote" asp-route-id="@Model.SupplyRequestId"><input hidden name="@nameof(Note.NoteId)" value="@note.note.NoteId"/><button type="submit">Archive</button></form></td>
                         </tr>
                     }
                 }
@@ -119,7 +119,7 @@
                         </div>
                         <div>
                             <label>Archieved?</label>
-                            <input type="checkbox" id="Archieved" name="@nameof(Note.Archived)" value="true" disabled>
+                            <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -214,5 +214,6 @@
     $(document).ready(function () {
         $('#noteTable').DataTable();
     });
+
         </script>
     }

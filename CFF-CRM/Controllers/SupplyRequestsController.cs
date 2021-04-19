@@ -24,7 +24,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? UserName)
         {
             //Check user permission
 
@@ -34,7 +34,8 @@ namespace CFF_CRM.Controllers
             {
                 return RedirectToAction("Index","Home");
             }
-            var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.User);
+            var cRMContext = _context.SupplyRequests.Include(s => s.orderItem).Include(s => s.status).Include(s => s.supplyRequestOrigin).Include(s => s.supplyRequestType).Include(s => s.User).Where(s => s.UserId == userId);
+            ViewBag.idResult = UserName;
             return View(await cRMContext.ToListAsync());
         }
 
@@ -265,6 +266,47 @@ namespace CFF_CRM.Controllers
             }
             return RedirectToAction(nameof(Edit), new { ID = id });
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ArchiveNote(int id, Note noteinput)
+        {
+            Note note = await _context.Notes.FirstAsync(n => n.NoteId == noteinput.NoteId);
+            if (note == null)
+            {
+                return NotFound();
+            }
+            note.Archived = true;
+            _context.Notes.Update(note);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Edit), new { ID = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangeOwner(int id, string UserName)
+        {
+            //get user id from user name
+
+            User newOwner = _userManager.Users.First(u => u.UserName == UserName);
+            if (newOwner == null)
+            {
+                return NotFound();
+            }
+            //get supply request
+            SupplyRequest supplyRequest = _context.SupplyRequests.First(s => s.SupplyRequestId == id);
+            
+            if (supplyRequest == null)
+            {
+                return NotFound();
+            }
+            //update supply request
+            supplyRequest.UserId = newOwner.Id;
+            _context.SupplyRequests.Update(supplyRequest);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { ID = UserName });
+        }
+
 
         private bool SupplyRequestExists(int id)
         {

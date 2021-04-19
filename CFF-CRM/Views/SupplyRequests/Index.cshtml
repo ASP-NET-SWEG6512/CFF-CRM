@@ -7,12 +7,36 @@
 
 <h1>Supply Request List</h1>
 
+
+@if (ViewBag.idResult != null)
+{
+<div class="alert alert-success" role="alert">
+    You can successfully transfer ownership!
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+}
+@*<div id="msgfailbase"></div>*@
+
+<div id="msgfail" class="alert alert-danger" role="alert" style="display: none;">
+    Change owner failed! You need enter a username to proceed changing ownership.
+    <button class="close msgfailclose" >
+        <span>&times;</span>
+    </button>
+</div>
+
+<form id="changeownerform" method="post">
+    <label>New Owner:</label>
+    <input value="@ViewBag.idResult" id="UserName" name="UserName" placeholder="Username" required />
+</form>
 <p class="text-right">
     <a class="btn btn-primary" asp-action="Create">Create New</a>
 </p>
-<table id="supply_request" class="table">
+<table id="supply_request" class="table table-sm">
     <thead>
         <tr>
+            <th>SupplyRequestId</th>
             <th>
                 Status
             </th>
@@ -50,6 +74,7 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.SupplyRequestId)</td>
                 <td>
                     <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
                 </td>
@@ -84,18 +109,48 @@
                     @Html.DisplayFor(modelItem => item.UpdateTime)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.SupplyRequestId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.SupplyRequestId">Delete</a>
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.SupplyRequestId">Edit</a> |
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.SupplyRequestId">Details</a> |
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.SupplyRequestId">Delete</a> |
+                    <button class="btn btn-sm btn-outline-primary">Change Owner</button>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#supply_request').DataTable();
+            var table = $('#supply_request').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false,
+                        "searchable": false
+                    }]
+            });
+            $('#supply_request tbody').on('click', 'button', function () {
+                var data = table.row($(this).parents('tr')).data();
+                $(".SupplyRequestChange").val(data[0]);
+                $("#changeownerform").attr('action', '/SupplyRequests/ChangeOwner/' + data[0]);
+                var username = $("#UserName").val();
+                if (username != null && username.length > 0) {
+                    $("#changeownerform").submit();
+                } else {
+                    $("#msgfail").toggle();
+//                        $("#msgfailbase").html(```<div class="alert alert-danger" role="alert">
+//                    Change ownership failed!
+//                        < button type = "button" class="close msgfailclose" data - dismiss="alert" aria - label="Close" >
+//                            <span aria-hidden="true">&times;</span>
+//    </button >
+//</div >```)
+                }
+                
+            });
+            $(".msgfailclose").click(function () {
+                $("#msgfail").toggle();
+            });
         });
     </script>
 }
