@@ -43,6 +43,13 @@ namespace CFF_CRM.Areas.Admin.Controllers
             return View(model);
         }
 
+        public IActionResult ManageUser(string id)
+        {
+            //return RedirectToRoute("admin",)
+            return RedirectToRoute("default", new { controller = "Account", action = "Register", id });
+        }
+            
+
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -97,6 +104,7 @@ namespace CFF_CRM.Areas.Admin.Controllers
             await roleManager.CreateAsync(new IdentityRole("Admin")); 
             return RedirectToAction("Index");
         }
+
 
     }
 }

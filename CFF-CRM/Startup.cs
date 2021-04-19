@@ -61,6 +61,10 @@ namespace CFF_CRM
             app.UseAuthentication();
             app.UseAuthorization();
 
+            CRMContext.CreateAdminUser(app.ApplicationServices).Wait();
+            CRMContext.CreateUserUser(app.ApplicationServices).Wait();
+            CRMContext.CreateVisitorUser(app.ApplicationServices).Wait();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapAreaControllerRoute(

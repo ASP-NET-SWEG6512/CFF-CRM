@@ -1,51 +1,90 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> signInManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CFF_CRM</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css" />
     <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
     <!-- google font https://fonts.google.com/?preview.text=&preview.text_type=custom -->
+    <style>
+        .brand-logo {
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="nav-wrapper deep-purple darken-1">
-                <a href="#" class="brand-logo">CFF CRM</a>
-                <ul id="nav-mobile" class="right hide-on-med-and-down">
-                    <li><a href="sass.html">Sass</a></li>
-                    <li><a href="badges.html">Components</a></li>
-                    <li><a href="collapsible.html">JavaScript</a></li>
+    <div style="background-color: #5e35b1;" class="py-3 mb-4 border-bottom">
+        <div class="container">
+            <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between text-white">
+                <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-white text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="32" fill="currentColor" class="bi bi-emoji-laughing" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                        <path d="M12.331 9.5a1 1 0 0 1 0 1A4.998 4.998 0 0 1 8 13a4.998 4.998 0 0 1-4.33-2.5A1 1 0 0 1 4.535 9h6.93a1 1 0 0 1 .866.5zM7 6.5c0 .828-.448 0-1 0s-1 .828-1 0S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 0-1 0s-1 .828-1 0S9.448 5 10 5s1 .672 1 1.5z" />
+                    </svg>
+                    CFF CRM
+                </a>
+
+                <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <li><a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-house"></i> Home</a></li>
+                    <li><a asp-area="" asp-controller="SupplyRequests" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-card-list"></i> Supply Request</a></li>
+                    <li><a asp-area="" asp-controller="Tasks" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-clipboard-check"></i> Task Management</a></li>
+                    <li><a asp-area="Admin" asp-controller="User" asp-action="Index" class="nav-link text-white px-2 text-decoration-none"><i class="bi bi-people"></i> Administration</a></li>
                 </ul>
-            </div>
-        </nav>
-    </header>
+
+
+                @if (signInManager.IsSignedIn(User))
+                {
+                    // signed-in user - Log Out button and username
+                    <div class="dropdown">
+                        <a class=" dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> <span>@User.Identity.Name</span>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li>
+                                <form method="post" asp-action="Logout" asp-controller="Account" asp-area="">
+                                    <input hidden value="Log Out" />
+                                    <button class="dropdown-item hide" type="submit" href="#">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
+                }
+                else
+                {
+                    // get current action
+                    var action = ViewContext.RouteData.Values["action"]?.ToString();
+                    // anonymous user - Register link and Log In button
+                    <div>
+                        <a asp-action="Login" asp-controller="Account" asp-area="" class="btn btn-outline-light me-2">Login</a>
+                        <a asp-action="Register" asp-controller="Account" asp-area="" class="btn btn-warning">Register</a>
+                    </div>
+                }
+            </header>
+        </div>
+    </div>
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    @*<footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2021 - CFF_CRM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        M.AutoInit();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
-
