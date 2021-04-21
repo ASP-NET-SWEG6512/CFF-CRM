@@ -81,12 +81,8 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-<<<<<<< HEAD
         [Authorize(Roles = "Admin, User")]
-        public async Task<IActionResult> Create([Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task, Note note)
-=======
         public async Task<IActionResult> Create([Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task, Note note, List<IFormFile> FormFiles)
->>>>>>> 27897b6506c9a68567a81e8143ac714ecfd7b105
         {
 
             //Check user permission
