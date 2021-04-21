@@ -36,6 +36,15 @@ namespace CFF_CRM.Controllers
             ViewBag.Result = username;
             return View(await cRMContext.ToListAsync());
         }
+        public async Task<IActionResult> ListCurrent(string? username)
+        {
+            //Only query from task that the user has created
+            string userId = _userManager.GetUserId(HttpContext.User);
+            var currentTasks = _context.Tasks.Include(t => t.priority).Include(t => t.related).Include(t => t.status).Include(t => t.taskType).Include(t => t.User).Where(t => t.UserId == userId).Take(10);
+            ViewBag.Result = username;
+            ViewBag.Action = "ListCurrent";
+            return View("Index", await currentTasks.ToListAsync());
+        }
 
         // GET: Tasks/Details/5
         public async Task<IActionResult> Details(int? id)

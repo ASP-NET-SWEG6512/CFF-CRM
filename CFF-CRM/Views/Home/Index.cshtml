@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> signInManager
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -12,51 +15,61 @@
 <div class="row">
     <div class="col-sm-4">
         <div class="box">
-            <a href="#">Current Support Requests</a>
+            <a asp-controller="SupplyRequests" asp-action="ListCurrent" asp-route-username="@signInManager.UserManager.GetUserName(User)">Current Support Requests</a>
         </div>
     </div>
     <div class="col-sm-4">
         <div class="box">
-            <a href="#">Current Task Activities</a>
+            <a asp-controller="Tasks" asp-action="ListCurrent" asp-route-username="@signInManager.UserManager.GetUserName(User)">Current Task Activities</a>
         </div>
     </div>
-    <div class="col-sm-4">
+    @*<div class="col-sm-4">
         <div class="box">
             <a href="#">Current User Requests</a>
         </div>
-    </div>
+    </div>*@
 </div>
 
 
 <style>
-    .breadcrumb { background-color: white; }
+    .breadcrumb {
+        background-color: white;
+    }
+
     nav a, nav li, .breadcrumb-item.active, p {
         color: #605858;
     }
-    p#welcome {
-        font-size: 18px;
-        padding-left: 1rem;
-    }
+
+        p#welcome {
+            font-size: 18px;
+            padding-left: 1rem;
+        }
+
     .row {
         margin-top: 6rem;
     }
+
     .box {
         padding: 2rem 1rem;
         background: #5e35b1;
         border-radius: 20px;
         width: 90%;
         margin-left: 5%;
+        height: 100%;
     }
-    .box:hover {
-        background: #3C096C;
-    }
-    .box a {
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-    .box a:hover {
-        text-decoration: none;
-    }
+
+        .box:hover {
+            background: #3C096C;
+        }
+
+        .box a {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+            .box a:hover {
+                text-decoration: none;
+            }
 </style>
 
