@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using CFF_CRM.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CFF_CRM.Controllers
 {
@@ -16,10 +19,12 @@ namespace CFF_CRM.Controllers
     {
         private readonly CRMContext _context;
         private UserManager<User> _userManager;
-        public TasksController(CRMContext context, UserManager<User> userManager)
+        private static IWebHostEnvironment _hostingEnvironment;
+        public TasksController(CRMContext context, UserManager<User> userManager, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: Tasks
@@ -75,7 +80,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task, Note note)
+        public async Task<IActionResult> Create([Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task, Note note, List<IFormFile> FormFiles)
         {
 
             //Check user permission
@@ -101,6 +106,9 @@ namespace CFF_CRM.Controllers
                     _context.TaskNotes.Add(new TaskNote { TaskId = task.TaskId, NoteId = note.NoteId });
                     await _context.SaveChangesAsync();
                 }
+                //upload files
+                UploadFileAsync(task.TaskId, FormFiles);
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["PriorityId"] = new SelectList(_context.Priorities, "PriorityId", "Name", task.PriorityId);
@@ -136,6 +144,7 @@ namespace CFF_CRM.Controllers
             ViewData["Related"] = _context.Tasks.Select(t => t.RelatedName).Distinct().ToList();
 
             ViewBag.Notes = await _context.TaskNotes.Include(tn => tn.note).Where(tn => tn.TaskId == id).ToListAsync();
+            ViewBag.Attach = await _context.Attachments.Where(t => t.TaskId == id).ToListAsync();
             return View(task);
         }
 
@@ -293,6 +302,92 @@ namespace CFF_CRM.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index), new { USERNAME = UserName });
+        }
+        private void UploadFileAsync(int id, List<IFormFile> files)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            //file type
+            string[] permittedExtensions = { ".txt", ".pdf" };
+
+            foreach (var formFile in files)
+            {
+                //file size must be greater than zero
+                if (formFile.Length > 0)
+                {
+
+                    string filePath = "/upload-file/";
+                    //actual filename
+                    string sourceFilename = formFile.FileName;
+                    //random file name
+                    string saveName = Path.GetRandomFileName();
+
+                    var ext = Path.GetExtension(filePath).ToLowerInvariant();
+
+                    //check file extension
+                    if (string.IsNullOrEmpty(ext) || !permittedExtensions.Contains(ext))
+                    {
+                        using (var stream = System.IO.File.Create(webRootPath + filePath + saveName))
+                        {
+                            formFile.CopyTo(stream);
+                            stream.Flush();
+                        }
+                        var completeFilePath = Path.Combine(filePath, saveName);
+                        //save file to db
+                        _context.Attachments.Add(new Attachment { TaskId = id, Link = completeFilePath, Name = sourceFilename ,UploadDate = DateTime.Now });
+                        _context.SaveChanges();
+                    }
+                }
+            }
+        }
+        //single delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveFile(int id, Attachment attachment)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            //find file from db
+            Attachment attach = await _context.Attachments.FirstAsync(a => a.AttachmentId == attachment.AttachmentId);
+
+            //check if exist
+            if  (attach == null)
+            {
+                return NotFound();
+            }
+
+            //full path
+            string fullFilePath = webRootPath + attach.Link;
+            //delete file 
+
+            if (System.IO.File.Exists(fullFilePath))
+            {
+                System.IO.File.Delete(fullFilePath);
+            }
+            else
+            {
+                return NotFound();
+            }
+            //remove row from db
+            _context.Attachments.Remove(attach);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Edit), new { ID = id});
+        }
+
+        public async Task<FileResult> GetFile(int id, Attachment attachment)
+        {
+            var webRootPath = _hostingEnvironment.WebRootPath;
+            Attachment attach = await _context.Attachments.FirstAsync(a => a.AttachmentId == attachment.AttachmentId);
+
+            //check if exist
+            if (attach != null)
+            {
+            string fullFilePath = webRootPath + attach.Link;
+            if (System.IO.File.Exists(fullFilePath))
+            {
+                    var myfile = System.IO.File.ReadAllBytes(fullFilePath);
+                    return File(myfile, "application/octet-stream", attach.Name);
+            }
+            }
+            return null;
         }
 
     }

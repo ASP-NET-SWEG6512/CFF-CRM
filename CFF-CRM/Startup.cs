@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Http.Features;
 
 namespace CFF_CRM
 {
@@ -37,6 +37,11 @@ namespace CFF_CRM
                 options.LoginPath = $"/Account/Login";
                 options.LogoutPath = $"/Account/Logout";
                 //options.AccessDeniedPath = $"/Account/AccessDenied";
+            });
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 256 MB
+                options.MultipartBodyLengthLimit = 268435456;
             });
         }
 

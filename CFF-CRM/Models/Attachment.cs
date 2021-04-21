@@ -10,10 +10,11 @@ namespace CFF_CRM.Models
     {
         public int AttachmentId { get; set; }
 
-        [ForeignKey("Status")]
+        [ForeignKey("Task")]
         public int TaskId { get; set; }
         public Task task { get; set; }
         public string Link { get; set; }
+        public string Name { get; set; }
         public DateTime UploadDate { get; set; }
     }
 }
