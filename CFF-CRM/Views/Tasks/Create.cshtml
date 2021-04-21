@@ -11,8 +11,8 @@
 <hr />
 <div>
     <div>
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form enctype="multipart/form-data" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" enctype="multipart/form-data" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="StatusId" class="control-label">Status:</label>
                 <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
@@ -52,10 +52,16 @@
             <div>
                 <label>Archived?</label>
                 <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
-                <small class="form-text text-muted">Archieving the note will enable access to view them.</small>
+                <small class="form-text text-muted">Archiving the note will disable access to view them.</small>
             </div>
+            <!--Upload files start-->
+            <div class="form-group">
+                <input type="file" class="form-control-file" id="@nameof(UploadFormFileViewModel.FormFiles)" name="@nameof(UploadFormFileViewModel.FormFiles)" aria-describedby="FormFile" aria-label="Upload" multiple accept=".txt,.pdf" />
+                <small class="form-text text-muted">Only compatible files with .txt and .pdf extension</small>
+            </div>
+            <!--Upload files end-->
             <div class="float-right">
-                <input type="submit" value="Create" class="btn btn-primary ml-2" />
+                <button asp-page-handler="Upload" type="submit" class="btn btn-primary ml-2">Create</button>
                 <a class="btn btn-secondary" asp-action="Index">Back to List</a>
             </div>
         </form>
@@ -122,18 +128,18 @@
             name: 'client',
             source: clientText
         });
-    $('#StatusId').change(function () {
-        var content = document.getElementById('Content');
-        var archieved = document.getElementById('Archieved');
-        if ($('#StatusId').val() == 2) {
-            content.disabled = false;
-            archieved.disabled = false;
-        } else {
-            content.value = null;
-            content.disabled = true;
-            archieved.checked = false;
-            archieved.disabled = true;
-        }
-    });
+        $('#StatusId').change(function () {
+            var content = document.getElementById('Content');
+            var archieved = document.getElementById('Archieved');
+            if ($('#StatusId').val() == 2) {
+                content.disabled = false;
+                archieved.disabled = false;
+            } else {
+                content.value = null;
+                content.disabled = true;
+                archieved.checked = false;
+                archieved.disabled = true;
+            }
+        });
     </script>
 }

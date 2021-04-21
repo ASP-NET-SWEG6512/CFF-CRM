@@ -97,9 +97,47 @@
         </table>
     </div>
 </div>
+<div class="card mt-2">
+    <div class="card-body">
+        <h4>Attachment Section</h4>
+        <p class="text-right">
+            <button class="btn btn-outline-dark btn-sm" type="button" data-toggle="modal" data-target="#AttachModal"><i class="bi bi-plus-circle"></i> Upload File</button>
+        </p>
+        <table id="uploadTable" class="table table-sm">
+            <thead>
+                <tr>
+                    <td>File Name</td>
+                    <td>Upload Date</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attach in ViewBag.Attach)
+                {
+                        <tr>
+                            <td>
+                                @attach.Name
+                            </td>
+                            <td>
+                                @attach.UploadDate
+                            </td>
+                            <td>
+                                <form asp-action="RemoveFile" asp-route-id="@Model.TaskId"><input hidden name="@nameof(Attachment.AttachmentId)" value="@attach.AttachmentId" /><button type="submit">Remove</button></form>
+                                <form asp-action="GetFile" asp-route-id="@Model.TaskId"><input hidden name="@nameof(Attachment.AttachmentId)" value="@attach.AttachmentId" /><button type="submit">Download</button></form>
+                            </td>
+                        </tr>
+                    
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="float-right mt-2">
     <a class="btn btn-primary" asp-action="Index">Back to List</a>
 </div>
+<!--Upload Modal-->
+
+<!--Upload Modal-->
 <!--Note table end-->
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -214,6 +252,8 @@
     $(document).ready(function () {
         $('#noteTable').DataTable();
     });
-
+        $(document).ready(function () {
+            $('#uploadTable').DataTable();
+        });
     </script>
 }
