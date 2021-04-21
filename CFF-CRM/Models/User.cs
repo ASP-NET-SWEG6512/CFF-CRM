@@ -17,10 +17,10 @@ namespace CFF_CRM.Models
         //permission  //may not need Permission cuz Identity provided Permission functionalities
         public int? PermissionId { get; set; }
         public Permission Permission { get; set; }
-
         public string SaltKey { get; set; }
         public int Timeout { get; set; }
-
+        [NotMapped]
+        public PhoneNumber CustomPhoneNumber { get; set; }
         //default value
         public User()
         {

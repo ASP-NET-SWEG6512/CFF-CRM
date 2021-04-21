@@ -3,11 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace CFF_CRM.Models
 {
     public class RegisterViewModel
     {
+
+        //public RegisterViewModel(User user)
+        //{
+        //    this.Username = user.UserName;
+        //    this.FirstName = user.FirstName;
+        //    this.LastName = user.LastName;
+        //    this.PhoneNumber = user.PhoneNumber;
+        //    this.Roles = user.RoleNames;
+        //    this.Email = user.Email;
+        //}
+
         [Required(ErrorMessage = "Please enter a username.")]
         [StringLength(255)]
         public string Username { get; set; }
@@ -28,5 +40,18 @@ namespace CFF_CRM.Models
         [Required(ErrorMessage = "Please enter your last name.")]
         public string LastName { get; set; }
 
+        [DataType(DataType.EmailAddress)]
+        [Required(ErrorMessage = "Please enter your email.")]
+        public string Email { get; set; }
+
+
+        //public PhoneNumber PhoneNumber { get; set; }
+        [DataType(DataType.PhoneNumber)]
+        public string PhoneNumber { get; set; }
+        public int? PhoneNumberTypeId { get; set; }
+
+        public int? PhoneNumberPriorityId { get; set; }
+
+        public IList<string> Roles { get; set; }
     }
 }

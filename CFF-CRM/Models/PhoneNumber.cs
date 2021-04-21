@@ -17,11 +17,11 @@ namespace CFF_CRM.Models
         public User User { get; set; }
 
         [ForeignKey("PhoneType")]
-        public int PhoneTypeId { get; set; }
+        public int? PhoneTypeId { get; set; }
         public PhoneType PhoneType { get; set; }
 
         [ForeignKey("PhonePriority")]
-        public int PhonePriorityId { get; set; }
+        public int? PhonePriorityId { get; set; }
         public PhonePriority PhonePriority { get; set; }
 
         [DataType(DataType.PhoneNumber)] //phone number data type in db

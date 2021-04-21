@@ -18,6 +18,8 @@
     <Compile Remove="Migrations\20210412070722_AddIdentityTables.Designer.cs" />
     <Compile Remove="Migrations\20210412072952_AddIdentityTables.cs" />
     <Compile Remove="Migrations\20210412072952_AddIdentityTables.Designer.cs" />
+    <Compile Remove="Migrations\20210421033327_update db.cs" />
+    <Compile Remove="Migrations\20210421033327_update db.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

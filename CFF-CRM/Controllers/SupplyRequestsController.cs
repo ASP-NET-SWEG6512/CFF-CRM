@@ -57,6 +57,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests/Create
+        [Authorize(Roles = "Admin, User")]
         public IActionResult Create()
         {
             ViewData["OrderItemId"] = new SelectList(_context.OrderItems, "OrderItemId", "Name");
@@ -75,6 +76,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Create([Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest, Note note)
         {
 
@@ -116,6 +118,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests/Edit/5
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -146,6 +149,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Edit(int id, [Bind("SupplyRequestId,StatusId,UserId,OrderItemId,SupplyRequestOriginId,SupplyRequestTypeId,ClientName,OwnerName,CreatedBy,CreatedTime,UpdateBy,UpdateTime")] SupplyRequest supplyRequest)
         {
             //Get Current user
@@ -194,6 +198,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: SupplyRequests/Delete/5
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -219,6 +224,7 @@ namespace CFF_CRM.Controllers
         // POST: SupplyRequests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var supplyRequest = await _context.SupplyRequests.FindAsync(id);
@@ -228,6 +234,7 @@ namespace CFF_CRM.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> CreateNoteFromEdit([FromRoute] int id, Note note)
         {
             var supplyRequest = _context.SupplyRequests.First(s => s.SupplyRequestId == id);
@@ -253,6 +260,7 @@ namespace CFF_CRM.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ArchiveNote(int id, Note noteinput)
         {
             Note note = await _context.Notes.FirstAsync(n => n.NoteId == noteinput.NoteId);
@@ -268,6 +276,7 @@ namespace CFF_CRM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ChangeOwner(int id, string UserName)
         {
             //get user id from user name

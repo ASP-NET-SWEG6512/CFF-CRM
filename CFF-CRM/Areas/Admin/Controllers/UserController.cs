@@ -46,7 +46,8 @@ namespace CFF_CRM.Areas.Admin.Controllers
         public IActionResult ManageUser(string id)
         {
             //return RedirectToRoute("admin",)
-            return RedirectToRoute("default", new { controller = "Account", action = "Register", id });
+            //TempData["Role"] = "Admin";
+            return RedirectToRoute("default", new { controller = "Account", action = "Register", id, isAdmin = true, task = "Edit" });
         }
             
 
@@ -104,7 +105,10 @@ namespace CFF_CRM.Areas.Admin.Controllers
             await roleManager.CreateAsync(new IdentityRole("Admin")); 
             return RedirectToAction("Index");
         }
-
+        public IActionResult ChangePassword(string id)
+        {
+            return RedirectToRoute("default", new { controller = "Account", action = "ChangePassword", id});
+        }
 
     }
 }

@@ -107,6 +107,13 @@ namespace CFF_CRM.Models
                 new PhoneType { PhoneTypeId = 3, Name = "Work" },
                 new PhoneType { PhoneTypeId = 4, Name = "Other" }
                 );
+            //phone priority type
+            modelBuilder.Entity<PhonePriority>().HasData(
+                new PhonePriority { PhonePriorityId = 1, Name = "First" },
+                new PhonePriority { PhonePriorityId = 2, Name = "Second" },
+                new PhonePriority { PhonePriorityId = 3, Name = "Third" },
+                new PhonePriority { PhonePriorityId = 4, Name = "Fourth" }
+                );
             //Permission list
             modelBuilder.Entity<Permission>().HasData(
                 new Permission { PermissionId = 1, Name = "Administrator" },

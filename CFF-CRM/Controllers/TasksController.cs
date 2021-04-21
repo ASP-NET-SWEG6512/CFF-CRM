@@ -56,6 +56,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: Tasks/Create
+        [Authorize(Roles = "Admin, User")]
         public IActionResult Create()
         {
             ViewData["PriorityId"] = new SelectList(_context.Priorities, "PriorityId", "Name");
@@ -75,6 +76,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Create([Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task, Note note)
         {
 
@@ -115,6 +117,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: Tasks/Edit/5
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -144,6 +147,7 @@ namespace CFF_CRM.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Edit(int id, [Bind("TaskId,StatusId,UserId,Owner,RelatedId,RelatedName,TaskTypeId,PriorityId,CreatedBy,CreatedTime")] Models.Task task)
         {
             //Get Current user
@@ -189,6 +193,7 @@ namespace CFF_CRM.Controllers
         }
 
         // GET: Tasks/Delete/5
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -214,6 +219,7 @@ namespace CFF_CRM.Controllers
         // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var task = await _context.Tasks.FindAsync(id);
@@ -231,6 +237,7 @@ namespace CFF_CRM.Controllers
          */
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> CreateNoteFromEdit([FromRoute] int id, Note note)
         {
             var task = _context.Tasks.First(t => t.TaskId == id);
@@ -256,6 +263,7 @@ namespace CFF_CRM.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ArchiveNote(int id, Note noteinput)
         {
             Note note = await _context.Notes.FirstAsync(n => n.NoteId == noteinput.NoteId);
@@ -271,6 +279,7 @@ namespace CFF_CRM.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ChangeOwner(int id, string UserName)
         {
             //get user id from user name
