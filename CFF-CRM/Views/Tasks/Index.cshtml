@@ -1,0 +1,152 @@
+﻿@model IEnumerable<CFF_CRM.Models.Task>
+
+@{
+    ViewData["Title"] = "Task";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var action = (string)ViewBag.Action ?? "";
+    var isListingCurrent = action == "ListCurrent";
+}
+
+<h1>@(isListingCurrent ? "Current Tasks" : "Task List")</h1>
+
+@if (ViewBag.Result != null && ! isListingCurrent)
+{
+    <div class="alert alert-success" role="alert">
+        You have successfully transfer ownership!
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<div id="msgfail" class="alert alert-danger" role="alert" style="display: none;">
+    Change owner failed! You need enter a username to proceed changing ownership.
+    <button class="close msgfailclose">
+        <span>&times;</span>
+    </button>
+</div>
+
+@if (!isListingCurrent)
+{
+    <form id="changeownerform" method="post">
+        <label>New Owner:</label>
+        <input id="UserName" name="UserName" placeholder="Username" required value="@(ViewBag.Result)" />
+    </form>
+    <p class="text-right">
+        <a class="btn btn-primary" asp-action="Create">Create New</a>
+    </p>
+}
+
+<table id="task" class="table table-sm">
+    <thead>
+        <tr>
+            <th>TaskId</th>
+            <th>
+                Status
+            </th>
+            <th>
+                Owner
+            </th>
+            <th>
+                Related To
+            </th>
+            <th>
+                Related To Name
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Priority
+            </th>
+            <th>
+                Created By
+            </th>
+            <th>
+                Created Time
+            </th>
+            <th>Updated By</th>
+            <th>Updated Time</th>
+            @if (!isListingCurrent)
+            {
+                <th>Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.TaskId)</td>
+            <td>
+                <span style="background-color:@item.status.Color" class="badge text-white">@Html.DisplayFor(modelItem => item.status.Name)</span>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Owner)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.related.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RelatedName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.taskType.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.priority.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdateTime)
+            </td>
+            @if (!isListingCurrent)
+            {
+                <td>
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@item.TaskId">Edit</a> |
+                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.TaskId">Details</a> |
+                    <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.TaskId">Delete</a> |
+                    <button class="btn btn-sm btn-outline-primary">Change Owner</button>
+                </td>
+            }
+
+        </tr>
+        }
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var tasktable = $('#task').DataTable({
+                "columnDefs": [
+                    {
+                        "targets": [0],
+                        "visible": false,
+                        "searchable": false
+                    }]
+            });
+            $('#task tbody').on('click', 'button', function () {
+                var data = tasktable.row($(this).parents('tr')).data();
+                $("#changeownerform").attr('action', '/Tasks/ChangeOwner/' + data[0]);
+                var username = $("#UserName").val();
+                if (username != null && username.length > 0) {
+                    $("#changeownerform").submit();
+                } else {
+                    $("#msgfail").toggle();
+                }
+
+            });
+            $(".msgfailclose").click(function () {
+                $("#msgfail").toggle();
+            });
+        });
+    </script>
+}

@@ -1,0 +1,124 @@
+﻿@model RegisterViewModel 
+@{ 
+    ViewBag.Title = "Register";
+    var phoneTypes = ViewBag.PhoneTypes;
+    var phonePriorities = ViewBag.PhonePriorities;
+    var roleNames = ViewBag.RoleNames;
+    var roleAdmin = (bool) (ViewBag.IsAdmin ?? false);
+    var task = ViewBag.Task;
+    var isEditing = roleAdmin && task == "Edit";
+} 
+
+<h1>@(roleAdmin ? "Manage User" : "Register")</h1>
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<form method="post" asp-action="Register">
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>First name:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="FirstName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="FirstName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>Last name:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="LastName" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>Email:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="Email" class="form-control" />
+        </div>
+        <div class="col">
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-2">
+            <label>Phone Number:</label>
+        </div>
+        <div class="col-sm-4">
+            <input asp-for="@Model.PhoneNumber)" class="form-control" />
+        </div>
+        <div class="col-sm-3">
+            <select asp-for="@Model.PhoneNumberTypeId" asp-items="@(new SelectList(phoneTypes, "PhoneTypeId", "Name"))"></select>
+        </div>
+        <div class="col-sm-3">
+            <select asp-for="@Model.PhoneNumberPriorityId" asp-items="@(new SelectList(phonePriorities, "PhonePriorityId", "Name"))"></select>
+        </div>
+    </div>
+
+    @*will make this part readonly to Admin; for now not do Edit Role*@
+    @if (!isEditing)
+    {
+        <div class="form-group row">
+            <div class="col-sm-2"><label>Roles:</label></div>
+            <div class="col-sm-4">
+                <select asp-for="@Model.Roles" asp-items="@(new SelectList(roleNames))"></select>
+            </div>
+        </div>
+    }
+    <div class="form-group row">
+        <div class="col-sm-2"><label>Username:</label></div>
+        <div class="col-sm-4">
+            @if (isEditing)
+            {
+                <input asp-for="Username" class="form-control" readonly />
+            }
+            else
+            {
+                <input asp-for="Username" class="form-control" />
+            }
+        </div>
+        <div class="col">
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+    </div>
+    @if (!isEditing)
+    {
+        <div class="form-group row">
+            <div class="col-sm-2"><label>Password:</label></div> <div class="col-sm-4">
+                <input type="password" asp-for="Password" class="form-control" />
+            </div>
+            <div class="col">
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-2"><label>Confirm Password:</label></div> <div class="col-sm-4">
+                <input type="password" asp-for="ConfirmPassword" class="form-control" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <input type="password" asp-for="Password" class="form-control" hidden/>
+        <input type="password" asp-for="ConfirmPassword" class="form-control" hidden/>
+    }
+    <div class="row">
+        <div class="offset-2 col-sm-4">
+            <button type="submit" class="btn btn-primary">@(isEditing ? "Edit" : "Register")</button>
+        </div>
+    </div>
+    @if (!isEditing)
+    {
+        <div class="row">
+            <div class="offset-2 col-sm-4">
+                Already registered? <a asp-action="LogIn">Log In</a>
+            </div>
+        </div>
+    }
+</form> 

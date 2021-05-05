@@ -1,0 +1,259 @@
+﻿@model CFF_CRM.Models.Task
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Task</h4>
+<hr />
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TaskId" />
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="CreatedBy" />
+            <input type="hidden" asp-for="CreatedTime" />
+            <div class="form-group">
+                <label asp-for="StatusId" class="control-label">Status:</label>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+                <span asp-validation-for="StatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTypeId" class="control-label">Task Type:</label>
+                <select asp-for="TaskTypeId" class="form-control" asp-items="ViewBag.TaskTypeId"></select>
+                <span asp-validation-for="TaskTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriorityId" class="control-label">Priority:</label>
+                <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+                <span asp-validation-for="PriorityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RelatedId" class="control-label">Related To:</label>
+                <select asp-for="RelatedId" class="form-control" asp-items="ViewBag.RelatedId"></select>
+                <span asp-validation-for="RelatedId" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="RelatedName" class="control-label">Related Name:</label>
+                    <br />
+                    <input asp-for="RelatedName" aria-describedby="autocom" class="autocomplete-related form-control " />
+                    <small id="autocom" class="form-text text-muted">Autocomplete from previously entered data</small>
+                    <span asp-validation-for="RelatedName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Owner" class="control-label">Owner Name:</label>
+                    <br />
+                    <input asp-for="Owner" class="autocomplete-owner form-control " />
+                    <span asp-validation-for="Owner" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group float-right">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card mt-2">
+    <div class="card-body">
+        <!--Note table-->
+        <h4>Note Section</h4>
+        <p class="text-right">
+            <button class="btn btn-outline-dark btn-sm" type="button" data-toggle="modal" data-target="#exampleModal"><i class="bi bi-plus-circle"></i> New Note</button>
+        </p>
+        <table id="noteTable" class="table table-sm">
+            <thead>
+                <tr>
+                    <td>Note</td>
+                    <td>CreatedBy</td>
+                    <td>CreatedDate</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var note in ViewBag.Notes)
+                {
+                    if (!note.note.Archived)
+                    {
+                        <tr>
+                            <td>
+                                @note.note.Content
+                            </td>
+                            <td>
+                                @note.note.CreatedBy
+                            </td>
+                            <td>
+                                @note.note.CreatedDate
+                            </td>
+                            <td><form asp-action="ArchiveNote" asp-route-id="@Model.TaskId"><input hidden name="@nameof(Note.NoteId)" value="@note.note.NoteId" /><button type="submit">Archive</button></form></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card mt-2">
+    <div class="card-body">
+        <h4>Attachment Section</h4>
+        <p class="text-right">
+            <button class="btn btn-outline-dark btn-sm" type="button" data-toggle="modal" data-target="#AttachModal"><i class="bi bi-plus-circle"></i> Upload File</button>
+        </p>
+        <table id="uploadTable" class="table table-sm">
+            <thead>
+                <tr>
+                    <td>File Name</td>
+                    <td>Upload Date</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var attach in ViewBag.Attach)
+                {
+                        <tr>
+                            <td>
+                                @attach.Name
+                            </td>
+                            <td>
+                                @attach.UploadDate
+                            </td>
+                            <td>
+                                <form asp-action="RemoveFile" asp-route-id="@Model.TaskId"><input hidden name="@nameof(Attachment.AttachmentId)" value="@attach.AttachmentId" /><button type="submit">Remove</button></form>
+                                <form asp-action="GetFile" asp-route-id="@Model.TaskId"><input hidden name="@nameof(Attachment.AttachmentId)" value="@attach.AttachmentId" /><button type="submit">Download</button></form>
+                            </td>
+                        </tr>
+                    
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="float-right mt-2">
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+</div>
+<!--Upload Modal-->
+
+<!--Upload Modal-->
+<!--Note table end-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <!-- Note Section-->
+            <form asp-action="CreateNoteFromEdit" asp-route-id="@Model.TaskId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Add New Note</label>
+                        <textarea class="form-control" id="Content" rows="3" name="@nameof(Note.Content)" disabled></textarea>
+                    </div>
+                    <div>
+                        <label>Archived?</label>
+                        <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+            <!--Not section end-->
+        </div>
+    </div>
+</div>
+<!--Modal End-->
+<style>
+    .autocomplete-related, .autocomplete-owner, .tt-query, .tt-hint {
+        border: 2px solid #CCCCCC;
+        width: 396px;
+    }
+
+    .tt-menu {
+        background-color: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        padding: 8px 0;
+        width: 396px;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*Autocomplete data*@
+    <script type="text/javascript">
+    var ownerText = @Html.Raw(Json.Serialize(@ViewBag.Owner));
+    var clientText = @Html.Raw(Json.Serialize(@ViewBag.Related));
+    var ownerText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: ownerText
+    });
+    var clientText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: clientText
+    });
+    $('.autocomplete-owner').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'owner',
+            source: ownerText
+        });
+        $('.autocomplete-related').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'client',
+            source: clientText
+        });
+    function loadingPage() {
+        var content = document.getElementById('Content');
+        var archieved = document.getElementById('Archieved');
+        if ($('#StatusId').val() == 2) {
+            content.disabled = false;
+            archieved.disabled = false;
+        } else {
+            content.value = null;
+            content.disabled = true;
+            archieved.checked = false;
+            archieved.disabled = true;
+        }
+    };
+    $().ready(loadingPage());
+    $("#other").click(function () {
+        $("#target").submit();
+    });
+    $(document).ready(function () {
+        $('#noteTable').DataTable();
+    });
+        $(document).ready(function () {
+            $('#uploadTable').DataTable();
+        });
+    </script>
+}

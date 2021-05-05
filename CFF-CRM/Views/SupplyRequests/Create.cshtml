@@ -1,0 +1,135 @@
+﻿@model CFF_CRM.Models.SupplyRequest
+@{
+    ViewData["Title"] = "Create Supply Request";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+<h4>Supply Request</h4>
+<hr />
+<div class="form center">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="StatusId">Status:</label>
+            <select class="form-control" asp-for="StatusId" asp-items="ViewBag.StatusId"></select>
+        </div>
+        <div class="form-group">
+            <label asp-for="OrderItemId">Order Item:</label>
+            <select class="form-control" asp-for="OrderItemId" asp-items="ViewBag.OrderItemId"></select>
+        </div>
+        <div class="form-group">
+            <label asp-for="SupplyRequestOriginId">Supply Request Origin:</label>
+            <select class="form-control" asp-for="SupplyRequestOriginId" asp-items="ViewBag.SupplyRequestOriginId"></select>
+        </div>
+        <div class="form-group">
+            <label asp-for="SupplyRequestTypeId">Supply Request Type:</label>
+            <select class="form-control" asp-for="SupplyRequestTypeId" asp-items="ViewBag.SupplyRequestTypeId"></select>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label asp-for="ClientName">Client Name:</label>
+                <br />
+                <input type="text" class="autocomplete-client form-control" aria-describedby="autocom" asp-for="ClientName" />
+                <small id="autocom" class="form-text text-muted">Autocomplete from previously entered data</small>
+                <span asp-validation-for="ClientName" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="OwnerName">Owner Name:</label>
+                <br />
+                <input type="text" class="autocomplete-owner form-control" asp-for="OwnerName" />
+                <span asp-validation-for="OwnerName" class="text-danger"></span>
+            </div>
+        </div>
+        <!-- Note Section-->
+        <div class="form-group">
+            <label>Note Section</label>
+            <textarea class="form-control" id="Content" rows="3" name="@nameof(Note.Content)" disabled></textarea>
+        </div>
+        <div>
+            <label>Archived?</label>
+            <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
+            <small class="form-text text-muted">Archieving the note will enable access to view them.</small>
+        </div>
+        <div class="float-right">
+            <input type="submit" value="Create" class="btn btn-primary ml-2" />
+            <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+        </div>
+    </form>
+</div>
+<style>
+    .autocomplete-client, .autocomplete-owner, .tt-query, .tt-hint {
+        border: 2px solid #CCCCCC;
+        width: 396px;
+    }
+
+    .tt-menu {
+        background-color: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        padding: 8px 0;
+        width: 396px;
+    }
+</style>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    @*Autocomplete data*@
+    <script type="text/javascript">
+    var ownerText = @Html.Raw(Json.Serialize(@ViewBag.Owner));
+    var clientText = @Html.Raw(Json.Serialize(@ViewBag.Client));
+    var ownerText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: ownerText
+    });
+    var clientText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: clientText
+    });
+    $('.autocomplete-owner').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'owner',
+            source: ownerText
+        });
+    $('.autocomplete-client').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'client',
+            source: clientText
+        });
+    $('#StatusId').change(function () {
+        var content = document.getElementById('Content');
+        var archieved = document.getElementById('Archieved');
+        if ($('#StatusId').val() == 2) {
+            content.disabled = false;
+            archieved.disabled = false;
+        } else {
+            content.value = null;
+            content.disabled = true;
+            archieved.checked = false;
+            archieved.disabled = true;
+        }
+    });
+    </script>
+}

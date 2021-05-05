@@ -1,6 +1,8 @@
+using CFF_CRM.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace CFF_CRM
 {
@@ -24,6 +28,21 @@ namespace CFF_CRM
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddDbContext<CRMContext>(options =>
+            options.UseSqlServer(
+                Configuration.GetConnectionString("CRMContext")));
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<CRMContext>().AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Account/Login";
+                options.LogoutPath = $"/Account/Logout";
+                //options.AccessDeniedPath = $"/Account/AccessDenied";
+            });
+            services.Configure<FormOptions>(options =>
+            {
+                // Set the limit to 256 MB
+                options.MultipartBodyLengthLimit = 268435456;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,13 +63,23 @@ namespace CFF_CRM
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            CRMContext.CreateAdminUser(app.ApplicationServices).Wait();
+            CRMContext.CreateUserUser(app.ApplicationServices).Wait();
+            CRMContext.CreateVisitorUser(app.ApplicationServices).Wait();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapAreaControllerRoute(
+                  name: "admin",
+                  areaName: "Admin",
+                  pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                
             });
         }
     }

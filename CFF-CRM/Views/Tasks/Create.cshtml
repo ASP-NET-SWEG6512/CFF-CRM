@@ -1,0 +1,145 @@
+﻿@model CFF_CRM.Models.Task
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Task</h4>
+<hr />
+<div>
+    <div>
+        <form enctype="multipart/form-data" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" enctype="multipart/form-data" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="StatusId" class="control-label">Status:</label>
+                <select asp-for="StatusId" class="form-control" asp-items="ViewBag.StatusId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTypeId" class="control-label">Task Type:</label>
+                <select asp-for="TaskTypeId" class="form-control" asp-items="ViewBag.TaskTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriorityId" class="control-label">Priority:</label>
+                <select asp-for="PriorityId" class="form-control" asp-items="ViewBag.PriorityId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="RelatedId" class="control-label">Related To:</label>
+                <select asp-for="RelatedId" class="form-control" asp-items="ViewBag.RelatedId"></select>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label asp-for="RelatedName" class="control-label">Related To Name:</label>
+                    <br />
+                    <input asp-for="RelatedName" aria-describedby="autocom" class="autocomplete-related form-control" />
+                    <small id="autocom" class="form-text text-muted">Autocomplete from previously entered data</small>
+                    <span asp-validation-for="RelatedName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Owner" class="control-label">Owner Name:</label>
+                    <br />
+                    <input asp-for="Owner" class="autocomplete-owner form-control " />
+                    <span asp-validation-for="Owner" class="text-danger"></span>
+                </div>
+            </div>
+            <!-- Note Section-->
+            <div class="form-group">
+                <label>Note Section</label>
+                <textarea class="form-control" id="Content" rows="3" name="@nameof(Note.Content)" disabled></textarea>
+            </div>
+            <div>
+                <label>Archived?</label>
+                <input type="checkbox" id="Archived" name="@nameof(Note.Archived)" value="true" disabled>
+                <small class="form-text text-muted">Archiving the note will disable access to view them.</small>
+            </div>
+            <!--Upload files start-->
+            <div class="form-group">
+                <input type="file" class="form-control-file" id="@nameof(UploadFormFileViewModel.FormFiles)" name="@nameof(UploadFormFileViewModel.FormFiles)" aria-describedby="FormFile" aria-label="Upload" multiple accept=".txt,.pdf" />
+                <small class="form-text text-muted">Only compatible files with .txt and .pdf extension</small>
+            </div>
+            <!--Upload files end-->
+            <div class="float-right">
+                <button asp-page-handler="Upload" type="submit" class="btn btn-primary ml-2">Create</button>
+                <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    .autocomplete-related, .autocomplete-owner, .tt-query, .tt-hint {
+        border: 2px solid #CCCCCC;
+        width: 396px;
+    }
+
+    .tt-menu {
+        background-color: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        padding: 8px 0;
+        width: 396px;
+    }
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*Autocomplete data*@
+    <script type="text/javascript">
+    var ownerText = @Html.Raw(Json.Serialize(@ViewBag.Owner));
+    var clientText = @Html.Raw(Json.Serialize(@ViewBag.Related));
+    var ownerText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: ownerText
+    });
+    var clientText = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: clientText
+    });
+    $('.autocomplete-owner').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'owner',
+            source: ownerText
+        });
+    $('.autocomplete-related').typeahead({
+        hint: true,
+        minLength: 1,
+        highlight: true,
+        classNames: {
+            input: 'Typeahead-input',
+            hint: 'Typeahead-hint',
+            selectable: 'Typeahead-selectable'
+        }
+    },
+        {
+            name: 'client',
+            source: clientText
+        });
+        $('#StatusId').change(function () {
+            var content = document.getElementById('Content');
+            var archieved = document.getElementById('Archieved');
+            if ($('#StatusId').val() == 2) {
+                content.disabled = false;
+                archieved.disabled = false;
+            } else {
+                content.value = null;
+                content.disabled = true;
+                archieved.checked = false;
+                archieved.disabled = true;
+            }
+        });
+    </script>
+}
