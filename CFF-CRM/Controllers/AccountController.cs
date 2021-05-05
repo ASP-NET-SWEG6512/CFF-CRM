@@ -101,6 +101,12 @@ namespace CFF_CRM.Controllers
                     {
                         ModelState.AddModelError("", error.Description);
                     }
+                    var phoneTypes = _context.PhoneTypes.ToList();
+                    var phonePriorities = _context.PhonePriorities.ToList();
+                    var roleNames = roleManager.Roles.Select(m => m.Name).ToList();
+                    ViewBag.PhoneTypes = phoneTypes;
+                    ViewBag.PhonePriorities = phonePriorities;
+                    ViewBag.RoleNames = roleNames;
                 }
             }
             return View(model);
