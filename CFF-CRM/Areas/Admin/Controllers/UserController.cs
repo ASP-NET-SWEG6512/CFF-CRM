@@ -16,10 +16,13 @@ namespace CFF_CRM.Areas.Admin.Controllers
         private UserManager<User> userManager;
         private RoleManager<IdentityRole> roleManager;
 
-        public UserController(UserManager<User> userMngr, RoleManager<IdentityRole> roleMngr)
+        private readonly CRMContext _context;
+
+        public UserController(UserManager<User> userMngr, RoleManager<IdentityRole> roleMngr, CRMContext context)
         {
             userManager = userMngr;
             roleManager = roleMngr;
+            _context = context;
         }
         //public IActionResult Index()
         //{
@@ -57,6 +60,10 @@ namespace CFF_CRM.Areas.Admin.Controllers
             User user = await userManager.FindByIdAsync(id); 
             if (user != null)
             {
+
+                //delete all resources 
+                DeleteAllResourcesReferenceUser(user);
+
                 IdentityResult result = await userManager.DeleteAsync(user); 
 
                 if (!result.Succeeded)
@@ -70,6 +77,25 @@ namespace CFF_CRM.Areas.Admin.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+
+        private void DeleteAllResourcesReferenceUser(User user)
+        {
+            string userId = user.Id;
+
+            //delete phone number
+            var phnum = _context.PhoneNumbers.Where(ph => ph.UserId == userId).ToList();
+            _context.PhoneNumbers.RemoveRange(phnum);
+
+            //delete supply request
+            var sprequest = _context.SupplyRequests.Where(sp => sp.UserId == userId).ToList();
+            _context.SupplyRequests.RemoveRange(sprequest);
+            //delete task management
+
+            var tkm = _context.Tasks.Where(t => t.UserId == userId).ToList();
+            _context.Tasks.RemoveRange(tkm);
+
+            _context.SaveChanges();
         }
         // the Add() methods work like the Register() methods from 16-11 and 16-12 [HttpPost]
         public async Task<IActionResult> AddToAdmin(string id)
