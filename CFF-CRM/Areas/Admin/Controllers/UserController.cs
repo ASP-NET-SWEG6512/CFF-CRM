@@ -58,6 +58,7 @@ namespace CFF_CRM.Areas.Admin.Controllers
             if (user != null)
             {
                 IdentityResult result = await userManager.DeleteAsync(user); 
+
                 if (!result.Succeeded)
                 { // if failed 
                     string errorMessage = "";
